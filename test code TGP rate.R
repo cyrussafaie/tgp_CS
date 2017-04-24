@@ -1,20 +1,75 @@
+#IND only, trade class 1, pim classs 97 excluded, CS excluded
+
 data1=read.csv("table_export2_20170420.csv")
 ###removing some divisions becasue of clusure or recent aquisition
 data1=subset(data1,!(data1$DIV_NM %in% c('BALTIMORE','CHARLOTTE','LAKELAND','WAUKESHA')))
 
 # exclude Iowa number for 2013 P01 and 2013 P02
-
-
-
-
-names(data1)
-
-
+data1=subset(data1,!(data1$DIV_NM=="IOWA" & data1$FISC_YR_MTH %in% c('201301','201302')))
 dim(data1)
-
+names(data1)
 unique(data1$DIV_NM)
-
 tgp=as.numeric(data1$TGP_PER_CS)
+log_tgp_cs=as.numeric(log(data1$TGP_PER_CS))
+
+
+#############################
+#############################
+#normality test
+#############################
+#############################
+#shapiro null hypothesis:
+# that the population is normally distributed. Thus, if the p-value is less than the chosen alpha level, then the null hypothesis is rejected 
+
+## Perform the test
+shapiro.test(tgp)
+shapiro.test(log_tgp_cs)
+#non normal as is
+
+#test for multimodality
+library(diptest)
+dip.test(tgp)
+dip.test(log_tgp_cs)
+# at least bimodal
+
+plot(density(log_tgp_cs))
+plot(density(tgp))
+
+## Plot using a qqplot
+qqnorm(tgp);qqline(tgp, col = 2)
+qqnorm(log_tgp_cs);qqline(log_tgp_cs, col = 2)
+#it looks better with log transformed but still wotk to be done
+
+#############################
+#############################
+#mixture modeling
+#############################
+#############################
+# let's try Gaussian mixture model on log
+library(mclust)
+x.gmm = Mclust(log_tgp_cs)
+summary(x.gmm)
+x.gmm2 = Mclust(tgp,G=2)
+summary(x.gmm2)
+
+#forcing single modality
+x.gmm1 = Mclust(tgp,G=1)
+summary(x.gmm1)
+
+data2=cbind(class2=x.gmm2$classification,class3=x.gmm$classification,data1)
+#write.csv(data2,"ClassesSample.csv")
+
+# now let's test if unimodality makes sense
+x.gmm.1 = Mclust(tgp, G=1)
+logLik(x.gmm.1)
+# 'log Lik.' -2833.483 (df=2)
+logLik(x.gmm)-logLik(x.gmm.1)
+# 'log Lik.' 87.14665 (df=6)
+1-pchisq(87.14665, df=4)  # [1] 0!
+#clearly multi modal
+
+
+
 
 library(car)
 library(MASS)
@@ -35,18 +90,24 @@ summary(x.gmm)
 x.gmm2 = Mclust(tgp,G=2)
 summary(x.gmm2)
 
+#forcing single modality
+x.gmm1 = Mclust(tgp,G=1)
+summary(x.gmm1)
+
 data2=cbind(class2=x.gmm2$classification,class3=x.gmm$classification,data1)
 #write.csv(data2,"ClassesSample.csv")
+
 # now let's test if unimodality makes sense
-x.gmm.1 = Mclust(x, G=1)
+x.gmm.1 = Mclust(tgp, G=1)
 logLik(x.gmm.1)
-# 'log Lik.' -1226.241 (df=2)
+# 'log Lik.' -2833.483 (df=2)
 logLik(x.gmm)-logLik(x.gmm.1)
-# 'log Lik.' 25.36657 (df=5)
-1-pchisq(25.36657, df=3)  # [1] 1.294187e-05
+# 'log Lik.' 87.14665 (df=6)
+1-pchisq(87.14665, df=4)  # [1] 0!
+#clearly multi modal
 
 
-
+plot(density(tgp))
 
 plot(density(log(tgp)))
 plot(tgp)
