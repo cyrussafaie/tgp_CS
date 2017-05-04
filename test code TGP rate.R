@@ -45,12 +45,29 @@ qqnorm(log_tgp_cs);qqline(log_tgp_cs, col = 2)
 #mixture modeling
 #############################
 #############################
+
 # let's try Gaussian mixture model on log
 library(mclust)
-x.gmm = Mclust(log_tgp_cs)
+x.gmm = Mclust(tgp)
 summary(x.gmm)
-x.gmm2 = Mclust(tgp,G=2)
-summary(x.gmm2)
+#x.gmm2 = Mclust(tgp,G=2)
+#summary(x.gmm2)
+#names(x.gmm2)
+hist(log_tgp_cs)
+
+data2=cbind(class2=x.gmm2$classification,class3=x.gmm$classification,data1)
+#write.csv(data2,"ClassesSample.csv")
+data3=subset(data2,data2$class3!='3')
+plot(density(data3$TGP_PER_CS))
+shapiro.test(log(data3$TGP_PER_CS))
+tgp3=as.numeric(log(data3$TGP_PER_CS))
+qqnorm(tgp3);qqline(tgp3, col = 2)
+
+tgp3=as.numeric(data3$TGP_PER_CS)
+library(fitdistrplus)
+fitdistr(tgp3, "pweibull")
+?fitdist
+ks.test(tgp3, "pweibull", scale=11.4320394, shape=54.2075211)
 
 #forcing single modality
 x.gmm1 = Mclust(tgp,G=1)
@@ -65,8 +82,10 @@ logLik(x.gmm.1)
 # 'log Lik.' -2833.483 (df=2)
 logLik(x.gmm)-logLik(x.gmm.1)
 # 'log Lik.' 87.14665 (df=6)
-1-pchisq(87.14665, df=4)  # [1] 0!
+1-pchisq(93.46622, df=4)  # [1] 0!
 #clearly multi modal
+
+
 
 
 

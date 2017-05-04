@@ -72,10 +72,14 @@ dt=subset(dt,dt$FISC_YR!='2013')
 dt=subset(dt,dt$FISC_YR_MTH!='201703')
 
 #Iowa 201401 and 201402 excluded due to missing data and skewed rate
+#JAckson closed period ecluded 201405 to 201506
+dt=subset(dt,!(dt$divPEriod %in% c('IOWA201401','IOWA201402','JACKSON201405','JACKSON201406','JACKSON201407'
+                                   ,'JACKSON201408','JACKSON201409','JACKSON201410','JACKSON201411','JACKSON201412',
+                                    'JACKSON201501','JACKSON201502','JACKSON201503','JACKSON201504',
+                                    'JACKSON201505','JACKSON201506')))
 
-#JAckson closed period ecluded 201410 to 201506
-
-subset(dt,is.na(dt$nps))
+dim(dt)
+subset(dt,dt$POI==0)
 
 
 VIF(lm(tgp_cs_ind_nonmda~sales_per_tm+account_per_tm+typeA_share+typeC_share,data = dt))
