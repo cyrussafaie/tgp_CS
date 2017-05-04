@@ -75,11 +75,24 @@ dt=subset(dt,dt$FISC_YR_MTH!='201703')
 #JAckson closed period ecluded 201405 to 201506
 dt=subset(dt,!(dt$divPEriod %in% c('IOWA201401','IOWA201402','JACKSON201405','JACKSON201406','JACKSON201407'
                                    ,'JACKSON201408','JACKSON201409','JACKSON201410','JACKSON201411','JACKSON201412',
-                                    'JACKSON201501','JACKSON201502','JACKSON201503','JACKSON201504',
-                                    'JACKSON201505','JACKSON201506')))
+                                   'JACKSON201501','JACKSON201502','JACKSON201503','JACKSON201504',
+                                   'JACKSON201505','JACKSON201506')))
 
+#outlier identification: yet to decide whether want to include
+source("outlier_tukey.R")
+dt$tgp_cs_ind_nonmda2=dt$tgp_cs_ind_nonmda
+outlierKD(dt,tgp_cs_ind_nonmda2)
 dim(dt)
-subset(dt,dt$POI==0)
+length(as.data.frame(subset(dt,is.na(dt$tgp_cs_ind_nonmda2)))$divPEriod)
+outliers=c('WEST VIRGINIA201508','WEST VIRGINIA201510','WEST VIRGINIA201601','WEST VIRGINIA201603'          
+           ,'WEST VIRGINIA201605','NORTH DAKOTA - BISMARCK201512','NORTH DAKOTA - BISMARCK201610','NORTH DAKOTA - BISMARCK201612'
+           ,'LITTLE ROCK201603','LITTLE ROCK201604','MEMPHIS201404','','MEMPHIS201702','LOS ANGELES201401','LOS ANGELES201402'
+           ,'LOS ANGELES201501','LOS ANGELES201508','LOS ANGELES201509','LOS ANGELES201510','LOS ANGELES201511','LOS ANGELES201512'            
+           ,'LOS ANGELES201601','LOS ANGELES201602','LOS ANGELES201603','LOS ANGELES201604','LOS ANGELES201605','LOS ANGELES201606'
+           ,'LOS ANGELES201607','LOS ANGELES201608','LOS ANGELES201609','LOS ANGELES201610','LOS ANGELES201611','LOS ANGELES201612'
+           ,'LOS ANGELES201701','LOS ANGELES201702')  
+
+
 
 
 VIF(lm(tgp_cs_ind_nonmda~sales_per_tm+account_per_tm+typeA_share+typeC_share,data = dt))
@@ -95,68 +108,68 @@ summary(test)
 
 #variables of interest
 selected_variables=c(#'DIV_NM',
-#'FISC_YR_MTH',
-'tgp_cs_ind_nonmda',
-'FISC_YR',
-'FISC_MTH_OF_YR',
-'Quarter_number',
-'EcomPenetration',
-#'Correct_Invoices',
-#'Complete_Orders',
-#'DamageFree_Orders',
-#'OnTime_Orders',
-#'POI',
-'YOYgrowth',
-'priceIndex',
-'nps',
-'Organized',
-'USFRank_BCG',
-'CustomMarketIndexCMI',
-'USFMarketShareStatic',
-'Cust_Tenure_mnth',
-'TM_Tenure_mnth',
-'Churn_true',
-'Investment.Spend.CS.participation',
-'Investment.PerCS',
-'CBA_share',
-'DonD._Share',
-'Fixed_sell_share',
-'Price_approval_share',
-'ind_share',
-#'tgp_per_drop',
-'ind_mda_share',
-'ind_nonmda_eb_share',
-'ind_nonmda_packer_share',
-'poultry_share',
-'pork_share',
-'canned_share',
-'groceryfrozen_share',
-'chemical_share',
-'dairy_share',
-'oil_share',
-'beef_share',
-'processedmeat_share',
-'disposable_share',
-'beverage_share',
-'apperizer_share',
-'seafood_share',
-'cheese_share',
-'produce_share',
-'american_share',
-'classic_share',
-'italian_share',
-'mexican_share',
-'bar_share',
-'deli_share',
-'steak_share',
-'otherasian_share',
-'typeA_share',
-'typeC_share',
-'prime_share',
-'new_share',
-'account_per_tm',
-'sales_per_tm',
-'trend') 
+          #'FISC_YR_MTH',
+          'tgp_cs_ind_nonmda',
+          'FISC_YR',
+          'FISC_MTH_OF_YR',
+          'Quarter_number',
+          'EcomPenetration',
+          #'Correct_Invoices',
+          #'Complete_Orders',
+          #'DamageFree_Orders',
+          #'OnTime_Orders',
+          #'POI',
+          'YOYgrowth',
+          'priceIndex',
+          'nps',
+          'Organized',
+          'USFRank_BCG',
+          'CustomMarketIndexCMI',
+          'USFMarketShareStatic',
+          'Cust_Tenure_mnth',
+          'TM_Tenure_mnth',
+          'Churn_true',
+          'Investment.Spend.CS.participation',
+          'Investment.PerCS',
+          'CBA_share',
+          'DonD._Share',
+          'Fixed_sell_share',
+          'Price_approval_share',
+          'ind_share',
+          #'tgp_per_drop',
+          'ind_mda_share',
+          'ind_nonmda_eb_share',
+          'ind_nonmda_packer_share',
+          'poultry_share',
+          'pork_share',
+          'canned_share',
+          'groceryfrozen_share',
+          'chemical_share',
+          'dairy_share',
+          'oil_share',
+          'beef_share',
+          'processedmeat_share',
+          'disposable_share',
+          'beverage_share',
+          'apperizer_share',
+          'seafood_share',
+          'cheese_share',
+          'produce_share',
+          'american_share',
+          'classic_share',
+          'italian_share',
+          'mexican_share',
+          'bar_share',
+          'deli_share',
+          'steak_share',
+          'otherasian_share',
+          'typeA_share',
+          'typeC_share',
+          'prime_share',
+          'new_share',
+          'account_per_tm',
+          'sales_per_tm',
+          'trend') 
 
 dt.model=subset(dt[,selected_variables],dt[,selected_variables]$FISC_YR!='2013')
 dim(dt.model)
