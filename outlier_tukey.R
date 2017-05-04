@@ -30,7 +30,7 @@ outlierKD <- function(dt, var) {
           }
 }
 
-outlierKD(dt,tgp_cs_ind_nonmda2)
-dt$tgp_cs_ind_nonmda2=dt$tgp_cs_ind_nonmda
-subset(dt,is.na(dt$tgp_cs_ind_nonmda2))
+# outlierKD(dt,tgp_cs_ind_nonmda2)
+# dt$tgp_cs_ind_nonmda2=dt$tgp_cs_ind_nonmda
+# subset(dt,is.na(dt$tgp_cs_ind_nonmda2))
 

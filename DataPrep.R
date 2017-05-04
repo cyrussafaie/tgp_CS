@@ -9,7 +9,7 @@ library(ggplot2)
 # exclude potentially customer type B
 # exclude price source 1 and 4
 #lost and new count seems a bit wierd may need to rerun and the counts
-tail(dt)
+#tail(dt)
 
 dt$tgp_cs_ind_nonmda=round(dt$TGP_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 
@@ -78,12 +78,12 @@ dt=subset(dt,!(dt$divPEriod %in% c('IOWA201401','IOWA201402','JACKSON201405','JA
                                    'JACKSON201501','JACKSON201502','JACKSON201503','JACKSON201504',
                                    'JACKSON201505','JACKSON201506')))
 
-#outlier identification: yet to decide whether want to include
+#outlier identification for output: yet to decide whether want to include
 source("outlier_tukey.R")
 dt$tgp_cs_ind_nonmda2=dt$tgp_cs_ind_nonmda
 outlierKD(dt,tgp_cs_ind_nonmda2)
 dim(dt)
-length(as.data.frame(subset(dt,is.na(dt$tgp_cs_ind_nonmda2)))$divPEriod)
+#length(as.data.frame(subset(dt,is.na(dt$tgp_cs_ind_nonmda2)))$divPEriod)
 outliers=c('WEST VIRGINIA201508','WEST VIRGINIA201510','WEST VIRGINIA201601','WEST VIRGINIA201603'          
            ,'WEST VIRGINIA201605','NORTH DAKOTA - BISMARCK201512','NORTH DAKOTA - BISMARCK201610','NORTH DAKOTA - BISMARCK201612'
            ,'LITTLE ROCK201603','LITTLE ROCK201604','MEMPHIS201404','','MEMPHIS201702','LOS ANGELES201401','LOS ANGELES201402'
@@ -92,6 +92,53 @@ outliers=c('WEST VIRGINIA201508','WEST VIRGINIA201510','WEST VIRGINIA201601','WE
            ,'LOS ANGELES201607','LOS ANGELES201608','LOS ANGELES201609','LOS ANGELES201610','LOS ANGELES201611','LOS ANGELES201612'
            ,'LOS ANGELES201701','LOS ANGELES201702')  
 
+
+#as.data.frame(subset(dt,is.na(dt$TM_Tenure_mnth)))$divPEriod
+
+#changin seattle ranking back to 1 as original data suggested
+dt$USFRank_BCG[dt$DIV_NM=='SEATTLE']<-1
+
+#followign script to impute tm and custoemr tenure with future values
+
+for (j in 1:3) {
+for (i in 1:(length(dt$TM_Tenure_mnth)-1)) if(is.na(dt$TM_Tenure_mnth[i])) dt$TM_Tenure_mnth[i]<-dt$TM_Tenure_mnth[i+1] 
+for (i in 1:(length(dt$Cust_Tenure_mnth)-1)) if(is.na(dt$Cust_Tenure_mnth[i])) dt$Cust_Tenure_mnth[i]<-dt$Cust_Tenure_mnth[i+1] 
+for (i in 1:(length(dt$nps)-1)) if(is.na(dt$nps[i])) dt$nps[i]<-dt$nps[i+1] 
+}
+summary(dt)
+
+#subset(dt2,dt2$divPEriod %in% c('CINCINNATI201401','CINCINNATI201402','CINCINNATI201403','CINCINNATI201404','CINCINNATI201405'))
+#as.data.frame(subset(dt,is.na(dt$TM_Tenure_mnth)))$divPEriod
+
+#####
+#####all na's handled and outlier flag generated
+#####
+
+ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
+          geom_point(shape=1) +    # Use hollow circles
+          geom_smooth(method=lm)   # Add linear regression line 
+#  (by default includes 95% confidence region)
+
+ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
+          geom_point(shape=1) +    # Use hollow circles
+          geom_smooth(method=lm,   # Add linear regression line
+                      se=FALSE)    # Don't add shaded confidence region
+
+
+ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
+          geom_point(shape=1) +    # Use hollow circles
+          geom_smooth()            # Add a loess smoothed fit curve with confidence region
+#> `geom_smooth()` using method = 'loess'
+
+
+names(dt)
+f <- as.formula(paste('tgp_cs_ind_nonmda ~', paste(colnames(dt)[92:120], collapse='+')))
+modelAllHexSubscales <- lm(f, dt)
+summary(modelAllHexSubscales)
+
+summary(loess(dt$tgp_cs_ind_nonmda~dt$sell_prc_ind_nonmda))
+
+names(dt)
 
 
 
