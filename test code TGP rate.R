@@ -12,7 +12,6 @@ unique(data1$DIV_NM)
 tgp=as.numeric(data1$TGP_PER_CS)
 log_tgp_cs=as.numeric(log(data1$TGP_PER_CS))
 
-
 #############################
 #############################
 #normality test

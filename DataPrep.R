@@ -120,7 +120,7 @@ ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
 #  (by default includes 95% confidence region)
 
 #houston seems to have high price with low tgp/cs
-subset(dt,dt$sell_prc_ind_nonmda>50)
+
 
 ########################################
 ########################################
@@ -136,6 +136,7 @@ dt.numerics=dt.numerics[,-117]
 names(dt.numerics)
 summary(dt.numerics)
 library(Hmisc)
+
 res2<-rcorr(as.matrix(dt.numerics),type = "pearson") #correlation matrix pearson
 corPlusSign=flattenCorrMatrix(round(res2$r,2), round(res2$P,2)) #2 by 2 correlation by person
 
@@ -147,7 +148,8 @@ colnames(corPlusSign2)=c("row","column","spearman_cor","spearman_signif")
 
 corPlusSign_joint=merge(corPlusSign,corPlusSign2,by = c("row","column"))
 head(corPlusSign_joint)
-write.csv(corPlusSign_joint,"correlationMAtrixDetail.csv",row.names = F)
+#write.csv(corPlusSign_joint,"correlationMAtrixDetail.csv",row.names = F)
+
 ########################################
 ########################################
 ########################################
@@ -192,16 +194,37 @@ plot.distrib.logged(dt.numerics,76,100)
 plot.distrib.logged(dt.numerics,101,116)
 
 dev.off()
-names(dt)
+names(dt1)
 dim(dt)
 
+
+#write.csv(dt,"dt_20170505_1824.csv",row.names = F)
 # first basic model
-model=lm(tgp_cs_ind_nonmda~Investment.Spend.CS.participation + 
-                   + Price_approval_share
-         
-                   ,data = dt)
-dt[1273,]
+
+#first replacing 0 in invetment spend case participation with a very small value
+which.min(dt$Investment.Spend.CS.participation)
+dt[948:949,]
+
+dt1=dt
+dt1$Investment.Spend.CS.participation[949]=0.0001
+min(dt$Investment.Spend.CS.participation>0)
+
+model=lm(log(tgp_cs_ind_nonmda)~Investment.Spend.CS.participation
+         + Price_approval_share 
+         + Cust_Tenure_mnth
+         + priceIndex
+         + TM_Tenure_mnth
+         + nps
+         + FISC_YR_MTH
+         + EcomPenetration
+         + Correct_Invoices
+
+         ,data = dt1)
+
 summary(model)
+
+dt1[1988,]
+
 #1. Residuals vs Fitted: This plot shows if residuals have non-linear patterns. should be random looking with no obvious pattern
 #2. Normal Q-Q: This plot shows if residuals are normally distributed.best to be on the line
 #3. Scale-Location It’s also called Spread-Location plot. assumption of equal variance (homoscedasticity). It’s good if you see a horizontal line with equally (randomly) spread points.
@@ -209,14 +232,6 @@ summary(model)
 
 par(mfrow=c(2,2))
 plot(model)
-
-dev.off()
-
-install.packages("gridExtra")
-diagPlts<-diagPlot(model)
-lbry<-c("grid", "gridExtra")
-lapply(lbry, require, character.only=TRUE, warn.conflicts = FALSE, quietly = TRUE)
-do.call(grid.arrange, c(diagPlts, main="Diagnostic Plots", ncol=3))
 
 dev.off()
 
