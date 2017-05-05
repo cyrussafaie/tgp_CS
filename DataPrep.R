@@ -149,8 +149,6 @@ corPlusSign_joint=merge(corPlusSign,corPlusSign2,by = c("row","column"))
 head(corPlusSign_joint)
 write.csv(corPlusSign_joint,"correlationMAtrixDetail.csv",row.names = F)
 
-dim(dt.numerics)[2]*116/2
-dim(corPlusSign_joint)
 
 
           names(dt)
