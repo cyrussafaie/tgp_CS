@@ -101,9 +101,9 @@ dt$USFRank_BCG[dt$DIV_NM=='SEATTLE']<-1
 #followign script to impute tm and custoemr tenure with future values
 
 for (j in 1:3) {
-for (i in 1:(length(dt$TM_Tenure_mnth)-1)) if(is.na(dt$TM_Tenure_mnth[i])) dt$TM_Tenure_mnth[i]<-dt$TM_Tenure_mnth[i+1] 
-for (i in 1:(length(dt$Cust_Tenure_mnth)-1)) if(is.na(dt$Cust_Tenure_mnth[i])) dt$Cust_Tenure_mnth[i]<-dt$Cust_Tenure_mnth[i+1] 
-for (i in 1:(length(dt$nps)-1)) if(is.na(dt$nps[i])) dt$nps[i]<-dt$nps[i+1] 
+          for (i in 1:(length(dt$TM_Tenure_mnth)-1)) if(is.na(dt$TM_Tenure_mnth[i])) dt$TM_Tenure_mnth[i]<-dt$TM_Tenure_mnth[i+1] 
+          for (i in 1:(length(dt$Cust_Tenure_mnth)-1)) if(is.na(dt$Cust_Tenure_mnth[i])) dt$Cust_Tenure_mnth[i]<-dt$Cust_Tenure_mnth[i+1] 
+          for (i in 1:(length(dt$nps)-1)) if(is.na(dt$nps[i])) dt$nps[i]<-dt$nps[i+1] 
 }
 summary(dt)
 
@@ -148,10 +148,94 @@ colnames(corPlusSign2)=c("row","column","spearman_cor","spearman_signif")
 corPlusSign_joint=merge(corPlusSign,corPlusSign2,by = c("row","column"))
 head(corPlusSign_joint)
 write.csv(corPlusSign_joint,"correlationMAtrixDetail.csv",row.names = F)
+########################################
+########################################
+########################################
+#now let's look at distributions
+########################################
+########################################
+########################################
+dim(dt.numerics)
+
+#function to plot distributions
+plot.distrib=function(dt,col.start,col.end){
+          par(mfrow=c(5,5),
+              oma = c(2,1,0,0) + 0.1,
+              mar = c(2,1,2,2) + 0.1)
+          for (i in col.start:col.end)
+          {
+                    plot(density((dt[,i])),yaxt='n',main = colnames(dt[i]))
+          }
+}
+
+#function to plot distributions logged
+plot.distrib.logged=function(dt,col.start,col.end){
+          par(mfrow=c(5,5),
+              oma = c(2,1,0,0) + 0.1,
+              mar = c(2,1,2,2) + 0.1)
+          for (i in col.start:col.end)
+          {
+                    plot(density(log(dt[,i])),yaxt='n',main = paste("log",colnames(dt[i]),sep = " "))
+          }
+}
+
+plot.distrib(dt.numerics,1,25)
+plot.distrib(dt.numerics,26,50)
+plot.distrib(dt.numerics,51,75)
+plot.distrib(dt.numerics,76,100)
+plot.distrib(dt.numerics,101,116)
+
+plot.distrib.logged(dt.numerics,1,25)
+plot.distrib.logged(dt.numerics,26,50)
+plot.distrib.logged(dt.numerics,51,75)
+plot.distrib.logged(dt.numerics,76,100)
+plot.distrib.logged(dt.numerics,101,116)
+
+dev.off()
+names(dt)
+dim(dt)
+
+# first basic model
+model=lm(tgp_cs_ind_nonmda~Investment.Spend.CS.participation + 
+                   + Price_approval_share
+         
+                   ,data = dt)
+dt[1273,]
+summary(model)
+#1. Residuals vs Fitted: This plot shows if residuals have non-linear patterns. should be random looking with no obvious pattern
+#2. Normal Q-Q: This plot shows if residuals are normally distributed.best to be on the line
+#3. Scale-Location It’s also called Spread-Location plot. assumption of equal variance (homoscedasticity). It’s good if you see a horizontal line with equally (randomly) spread points.
+#4. Residuals vs Leverage:  find influential cases (i.e., subjects) if any. Not all outliers are influential in linear regression analysis (whatever outliers mean). Watch out for cases outside the dashed line in the upper or lower corners usually 
+
+par(mfrow=c(2,2))
+plot(model)
+
+dev.off()
+
+install.packages("gridExtra")
+diagPlts<-diagPlot(model)
+lbry<-c("grid", "gridExtra")
+lapply(lbry, require, character.only=TRUE, warn.conflicts = FALSE, quietly = TRUE)
+do.call(grid.arrange, c(diagPlts, main="Diagnostic Plots", ncol=3))
+
+dev.off()
 
 
 
-          names(dt)
+f <- as.formula(paste('tgp_cs_ind_nonmda ~', paste(colnames(dt)[92:120], collapse='+')))
+modelAllHexSubscales <- lm(f, dt)
+summary(modelAllHexSubscales)
+
+
+
+
+
+
+
+
+
+
+names(dt.numerics)
 f <- as.formula(paste('tgp_cs_ind_nonmda ~', paste(colnames(dt)[92:120], collapse='+')))
 modelAllHexSubscales <- lm(f, dt)
 summary(modelAllHexSubscales)
