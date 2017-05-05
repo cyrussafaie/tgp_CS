@@ -119,19 +119,41 @@ ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
           geom_smooth(method=lm)   # Add linear regression line 
 #  (by default includes 95% confidence region)
 
-ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
-          geom_point(shape=1) +    # Use hollow circles
-          geom_smooth(method=lm,   # Add linear regression line
-                      se=FALSE)    # Don't add shaded confidence region
+#houston seems to have high price with low tgp/cs
+subset(dt,dt$sell_prc_ind_nonmda>50)
+
+########################################
+########################################
+########################################
+#now let's look at the correlation matrix and the significane leveles
+########################################
+########################################
+########################################
+
+nums=sapply(dt, is.numeric)# identifying numeric variables for correlation
+dt.numerics=dt[ , nums] #selecting numeric variables in teh data
+dt.numerics=dt.numerics[,-117]
+names(dt.numerics)
+summary(dt.numerics)
+library(Hmisc)
+res2<-rcorr(as.matrix(dt.numerics),type = "pearson") #correlation matrix pearson
+corPlusSign=flattenCorrMatrix(round(res2$r,2), round(res2$P,2)) #2 by 2 correlation by person
+
+res3<-rcorr(as.matrix(dt.numerics),type = "spearman") #correlation matrix spearman
+corPlusSign2=flattenCorrMatrix(round(res3$r,2),round(res3$P,2)) #2 by 2 correlation by spearman
+
+colnames(corPlusSign)=c("row","column","pearson_cor","pearson_signif")
+colnames(corPlusSign2)=c("row","column","spearman_cor","spearman_signif")
+
+corPlusSign_joint=merge(corPlusSign,corPlusSign2,by = c("row","column"))
+head(corPlusSign_joint)
+write.csv(corPlusSign_joint,"correlationMAtrixDetail.csv",row.names = F)
+
+dim(dt.numerics)[2]*116/2
+dim(corPlusSign_joint)
 
 
-ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
-          geom_point(shape=1) +    # Use hollow circles
-          geom_smooth()            # Add a loess smoothed fit curve with confidence region
-#> `geom_smooth()` using method = 'loess'
-
-
-names(dt)
+          names(dt)
 f <- as.formula(paste('tgp_cs_ind_nonmda ~', paste(colnames(dt)[92:120], collapse='+')))
 modelAllHexSubscales <- lm(f, dt)
 summary(modelAllHexSubscales)
@@ -291,4 +313,15 @@ flattenCorrMatrix <- function(cormat, pmat) {
 library(Hmisc)
 res2<-rcorr(as.matrix(fin))
 flattenCorrMatrix(round(res2$r,2), round(res2$P,2))
+
+ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
+          geom_point(shape=1) +    # Use hollow circles
+          geom_smooth(method=lm,   # Add linear regression line
+                      se=FALSE)    # Don't add shaded confidence region
+
+
+ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
+          geom_point(shape=1) +    # Use hollow circles
+          geom_smooth()            # Add a loess smoothed fit curve with confidence region
+#> `geom_smooth()` using method = 'loess'
 
