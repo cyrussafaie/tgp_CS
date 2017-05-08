@@ -106,7 +106,7 @@ for (j in 1:3) {
           for (i in 1:(length(dt$nps)-1)) if(is.na(dt$nps[i])) dt$nps[i]<-dt$nps[i+1] 
 }
 summary(dt)
-
+names(dt)
 #subset(dt2,dt2$divPEriod %in% c('CINCINNATI201401','CINCINNATI201402','CINCINNATI201403','CINCINNATI201404','CINCINNATI201405'))
 #as.data.frame(subset(dt,is.na(dt$TM_Tenure_mnth)))$divPEriod
 
@@ -209,21 +209,210 @@ dt1=dt
 dt1$Investment.Spend.CS.participation[949]=0.0001
 min(dt$Investment.Spend.CS.participation>0)
 
+# we should use 
 model=lm(log(tgp_cs_ind_nonmda)~Investment.Spend.CS.participation
          + Price_approval_share 
          + Cust_Tenure_mnth
          + priceIndex
          + TM_Tenure_mnth
          + nps
-         + FISC_YR_MTH
+         #+ FISC_YR_MTH
          + EcomPenetration
-         + Correct_Invoices
-
+         #+ Correct_Invoices
+         #+ Complete_Orders
+         + account_per_tm
+         + ind_nonmda_packer_share
+         + trend
+         + ind_mda_share
+         #+ typeA_share
+         + prime_share
+         + sales_per_tm
+         #+ ind_share
+         + typeC_share
+         + Churn_true
+         #+ DamageFree_Orders
+         #+ Investment.PerCS
+         +POI
+         #+ Organized
+         +priceIndex
+         +QTY_BEEF_IND_NONMDA
+         +QTY_CHEMICAL_IND_NONMDA
+         #+QTY_CHEESE_IND_NONMDA
+         #+QTY_CANFRUITVEG_IND_NONMDA
+         #+QTY_BEVERAGE_IND_NONMDA
+         +QTY_APPETIZER_IND_NONMDA
+         
          ,data = dt1)
 
 summary(model)
 
-dt1[1988,]
+########################################
+########################################
+#### model2
+########################################
+########################################
+
+model2=lm(log(tgp_cs_ind_nonmda)~account_per_tm+
+                    Churn_true+
+                    Complete_Orders+
+                    Correct_Invoices+
+                    Cust_Tenure_mnth+
+                    CUSTOMER_CNT_IND_NONMDA+
+                    CUSTOMER_CNTNEW_IND_NONMDA+
+                    CustomMarketIndexCMI+
+                    DamageFree_Orders+
+                    DROP_CNT_IND_NONMDA+
+                    EcomPenetration+
+                    Fixed_sell_share+
+                    ind_mda_share+
+                    ind_nonmda_eb_share+
+                    #ind_nonmda_packer_share+
+                    ind_share+
+                    Investment.PerCS+
+                    Investment.Spend.CS.participation+
+                    new_share+
+                    OnTime_Orders+
+                    Organized+
+                    POI+
+                    Price_approval_share+
+                    priceIndex+
+                    prime_share+
+                    QTY_AMERICANMENU_IND_NONMDA+
+                    QTY_APPETIZER_IND_NONMDA+
+                    QTY_BARMENU_IND_NONMDA+
+                    QTY_BEEF_IND_NONMDA+
+                    QTY_BEVERAGE_IND_NONMDA+
+                    QTY_CANFRUITVEG_IND_NONMDA+
+                    QTY_CHEESE_IND_NONMDA+
+                    QTY_CHEMICAL_IND_NONMDA+
+                    QTY_CLASSICMENU_IND_NONMDA+
+                    QTY_CUSTA_IND_NONMDA+
+                    QTY_DAIRY_IND_NONMDA+
+                    QTY_DELIMENU_IND_NONMDA+
+                    QTY_DISPOSABLE_IND_NONMDA+
+                    QTY_GROCERYFROZEN_IND_NONMDA+
+                    QTY_IND_NONMDA_LOCAL+
+                    QTY_ITALYPIT_IND_NONMDA+
+                    QTY_MEXIICANMENU_IND_NONMDA+
+                    QTY_OIL_IND_NONMDA+
+                    QTY_OTHASIANMENU_IND_NONMDA+
+                    QTY_PORK_IND_NONMDA+
+                    QTY_POULTRY_IND_NONMDA+
+                    QTY_PROCESSEDMEAT_IND_NONMDA+
+                    QTY_PRODUCE_IND_NONMDA+
+                    QTY_SEAFOOD_IND_NONMDA+
+                    QTY_SPECIALTYMEAT_IND_NONMDA+
+                    QTY_STEAKMENU_IND_NONMDA+
+                    Quarter_number+
+                    sales_per_tm+
+                    TM_Tenure_mnth+
+                    trend+
+                    typeA_share+
+                    typeC_share+
+                    USFMarketShareStatic+
+                    USFRank_BCG+
+                    YOYgrowth
+          
+          ,data=dt1)
+
+summary(model2)
+names(model2)
+
+drop1(model2,test = "Chisq")
+
+a=step(model2, direction = "both")
+summary(a)
+plot(exp(a$fitted.values),dt1$tgp_cs_ind_nonmda)
+abline(0, 1)
+
+par(mfrow=c(2,2))
+plot(a)
+
+a$terms
+summary(model.lm.full)
+summary(dt.model)
+
+
+#dt1[c(1594,64:66),]
+########################################
+########################################
+#### model3
+########################################
+########################################
+
+model3=lm(log(tgp_cs_ind_nonmda)~account_per_tm+
+                    Churn_true+
+                    Complete_Orders+
+                    Correct_Invoices+
+                    Cust_Tenure_mnth+
+                    CUSTOMER_CNT_IND_NONMDA+
+                    CUSTOMER_CNTNEW_IND_NONMDA+
+                    CustomMarketIndexCMI+
+                    DamageFree_Orders+
+                    DROP_CNT_IND_NONMDA+
+                    EcomPenetration+
+                    Fixed_sell_share+
+                    ind_mda_share+
+                    ind_nonmda_eb_share+
+                    #ind_nonmda_packer_share+
+                    ind_share+
+                    Investment.PerCS+
+                    Investment.Spend.CS.participation+
+                    new_share+
+                    OnTime_Orders+
+                    Organized+
+                    POI+
+                    Price_approval_share+
+                    priceIndex+
+                    prime_share+
+                    #QTY_AMERICANMENU_IND_NONMDA+
+                    #QTY_APPETIZER_IND_NONMDA+
+                    #QTY_BARMENU_IND_NONMDA+
+                    QTY_BEEF_IND_NONMDA+
+                    QTY_BEVERAGE_IND_NONMDA+
+                    QTY_CANFRUITVEG_IND_NONMDA+
+                    QTY_CHEESE_IND_NONMDA+
+                    QTY_CHEMICAL_IND_NONMDA+
+                    #QTY_CLASSICMENU_IND_NONMDA+
+                    QTY_CUSTA_IND_NONMDA+
+                    QTY_DAIRY_IND_NONMDA+
+                    QTY_DELIMENU_IND_NONMDA+
+                    QTY_DISPOSABLE_IND_NONMDA+
+                    QTY_GROCERYFROZEN_IND_NONMDA+
+                    QTY_IND_NONMDA_LOCAL+
+                    #QTY_ITALYPIT_IND_NONMDA+
+                    #QTY_MEXIICANMENU_IND_NONMDA+
+                    QTY_OIL_IND_NONMDA+
+                    #QTY_OTHASIANMENU_IND_NONMDA+
+                    QTY_PORK_IND_NONMDA+
+                    QTY_POULTRY_IND_NONMDA+
+                    QTY_PROCESSEDMEAT_IND_NONMDA+
+                    QTY_PRODUCE_IND_NONMDA+
+                    QTY_SEAFOOD_IND_NONMDA+
+                    QTY_SPECIALTYMEAT_IND_NONMDA+
+                    #QTY_STEAKMENU_IND_NONMDA+
+                    Quarter_number+
+                    sales_per_tm+
+                    TM_Tenure_mnth+
+                    trend+
+                    typeA_share+
+                    typeC_share+
+                    USFMarketShareStatic+
+                    USFRank_BCG+
+                    YOYgrowth
+          
+          ,data=dt1)
+
+summary(model3)
+b=step(model3, direction = "both")
+summary(b)
+dev.off()
+plot(exp(b$fitted.values),dt1$tgp_cs_ind_nonmda)
+abline(0, 1)
+par(mfrow=c(2,2))
+plot(b)
+
+
 
 #1. Residuals vs Fitted: This plot shows if residuals have non-linear patterns. should be random looking with no obvious pattern
 #2. Normal Q-Q: This plot shows if residuals are normally distributed.best to be on the line
@@ -240,13 +429,6 @@ dev.off()
 f <- as.formula(paste('tgp_cs_ind_nonmda ~', paste(colnames(dt)[92:120], collapse='+')))
 modelAllHexSubscales <- lm(f, dt)
 summary(modelAllHexSubscales)
-
-
-
-
-
-
-
 
 
 
@@ -306,36 +488,55 @@ selected_variables=c(#'DIV_NM',
           'ind_mda_share',
           'ind_nonmda_eb_share',
           'ind_nonmda_packer_share',
-          'poultry_share',
-          'pork_share',
-          'canned_share',
-          'groceryfrozen_share',
-          'chemical_share',
-          'dairy_share',
-          'oil_share',
-          'beef_share',
-          'processedmeat_share',
-          'disposable_share',
-          'beverage_share',
-          'apperizer_share',
-          'seafood_share',
-          'cheese_share',
-          'produce_share',
-          'american_share',
-          'classic_share',
-          'italian_share',
-          'mexican_share',
-          'bar_share',
-          'deli_share',
-          'steak_share',
-          'otherasian_share',
+          #'poultry_share',
+          #'pork_share',
+          #'canned_share',
+          #'groceryfrozen_share',
+          #'chemical_share',
+          #'dairy_share',
+          #'oil_share',
+          #'beef_share',
+          #'processedmeat_share',
+          #'disposable_share',
+          #'beverage_share',
+          #'apperizer_share',
+          #'seafood_share',
+          #'cheese_share',
+          #'produce_share',
+          #'american_share',
+          #'classic_share',
+          #'italian_share',
+          #'mexican_share',
+          #'bar_share',
+          #'deli_share',
+          #'steak_share',
+          #'otherasian_share',
           'typeA_share',
-          'typeC_share',
+          #'typeC_share',
           'prime_share',
           'new_share',
           'account_per_tm',
           'sales_per_tm',
           'trend') 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 dt.model=subset(dt[,selected_variables],dt[,selected_variables]$FISC_YR!='2013')
 dim(dt.model)
