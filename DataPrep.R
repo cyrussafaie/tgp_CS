@@ -311,7 +311,8 @@ model2=lm(log(tgp_cs_ind_nonmda)~account_per_tm+
                     typeC_share+
                     USFMarketShareStatic+
                     USFRank_BCG+
-                    YOYgrowth
+                    YOYgrowth+
+                    nps
           
           ,data=dt1)
 
@@ -322,7 +323,8 @@ drop1(model2,test = "Chisq")
 
 a=step(model2, direction = "both")
 summary(a)
-plot(exp(a$fitted.values),dt1$tgp_cs_ind_nonmda)
+dev.off()
+plot(exp(a$fitted.values),dt1$tgp_cs_ind_nonmda,col=8)
 abline(0, 1)
 
 par(mfrow=c(2,2))
@@ -396,10 +398,11 @@ model3=lm(log(tgp_cs_ind_nonmda)~account_per_tm+
                     TM_Tenure_mnth+
                     trend+
                     typeA_share+
-                    typeC_share+
+                    
                     USFMarketShareStatic+
                     USFRank_BCG+
-                    YOYgrowth
+                    YOYgrowth+
+                    nps
           
           ,data=dt1)
 
@@ -407,13 +410,36 @@ summary(model3)
 b=step(model3, direction = "both")
 summary(b)
 dev.off()
-plot(exp(b$fitted.values),dt1$tgp_cs_ind_nonmda)
+plot(exp(b$fitted.values),dt1$tgp_cs_ind_nonmda,col=5)
 abline(0, 1)
 par(mfrow=c(2,2))
 plot(b)
+plot(b$residuals,type = "l")
+#the variance inflation factor for the estimated coefficient bk —denoted VIFk —is just the factor by which the variance is inflated.
+#  it is a measure of how much the variance of the estimated regression coefficient bk is "inflated" by the existence of correlation among the predictor variables in the model. A VIF of 1 means that there is no correlation among the kth predictor and the remaining predictor variables, and hence the variance of bk is not inflated at all. The general rule of thumb is that VIFs exceeding 4 warrant further investigation, while VIFs exceeding 10 are signs of serious multicollinearity requiring correction.
+# The VIF for the predictor , tells us that the variance of the estimated coefficient of Weight is inflated by a factor of 8.42 because Weight is highly correlated with at least one of the other predictors in the model.
+#  solution for high VIF variable to either find the highly correlated variable and exclude it. if the variabke it self is correlated with many then it might be a good choice to be removed
+# more variables usually increase the rate
+# Centering a predictor merely entails subtracting the mean of the predictor values in the data set from each predictor value.
+library(rms)
+rms::vif(b)
+names(b)
+b$call
 
-
-
+cor.dt1=dt1[,c( Churn_true , 
+                 Cust_Tenure_mnth , CUSTOMER_CNT_IND_NONMDA , CustomMarketIndexCMI , 
+                 DROP_CNT_IND_NONMDA , EcomPenetration , Fixed_sell_share , 
+                 ind_mda_share , ind_nonmda_eb_share , ind_share , Investment.PerCS , 
+                 Investment.Spend.CS.participation , POI , Price_approval_share , 
+                 priceIndex , prime_share , QTY_BEEF_IND_NONMDA , QTY_CHEESE_IND_NONMDA , 
+                 QTY_CUSTA_IND_NONMDA , QTY_DAIRY_IND_NONMDA , QTY_DELIMENU_IND_NONMDA , 
+                 QTY_DISPOSABLE_IND_NONMDA , QTY_GROCERYFROZEN_IND_NONMDA , 
+                 QTY_IND_NONMDA_LOCAL , QTY_OIL_IND_NONMDA , QTY_PORK_IND_NONMDA , 
+                 QTY_POULTRY_IND_NONMDA , QTY_PROCESSEDMEAT_IND_NONMDA , QTY_PRODUCE_IND_NONMDA , 
+                 QTY_SEAFOOD_IND_NONMDA , Quarter_number , sales_per_tm , 
+                 TM_Tenure_mnth , trend , USFMarketShareStatic , USFRank_BCG , 
+                 nps)]
+names(dt1)
 #1. Residuals vs Fitted: This plot shows if residuals have non-linear patterns. should be random looking with no obvious pattern
 #2. Normal Q-Q: This plot shows if residuals are normally distributed.best to be on the line
 #3. Scale-Location It’s also called Spread-Location plot. assumption of equal variance (homoscedasticity). It’s good if you see a horizontal line with equally (randomly) spread points.
