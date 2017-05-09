@@ -207,7 +207,7 @@ dt[948:949,]
 
 dt1=dt
 dt1$Investment.Spend.CS.participation[949]=0.0001
-min(dt$Investment.Spend.CS.participation>0)
+
 
 # we should use 
 model=lm(log(tgp_cs_ind_nonmda)~Investment.Spend.CS.participation
