@@ -25,7 +25,7 @@ dt$sell_prc_ind_nonmda= round(dt$SALES_IND_NONMDA/dt$QTY_IND_NONMDA,4) #Avergae 
 dt$tgp_per_drop=round(dt$TGP_IND_NONMDA_RT_TYPE/dt$DROP_CNT_IND_NONMDA,4) # TGP per drop: probably too obvious to use
 dt$tgp_per_drop=round(dt$SALES_IND_NONMDA/dt$DROP_CNT_IND_NONMDA,4) #sales per drop 
 
-dt$ind_mda_share=round((dt$QTY_IND-dt$QTY_IND_NONMDA)/dt$QTY_IND,4) #mda share of IND
+dt$ind_nonmda_share=round(dt$QTY_IND_NONMDA/dt$QTY_IND,4) #mda share of IND
 
 #dt$indnonmdalocal_share=dt$QTY_IND_NONMDA_LOCAL/dt$QTY_IND_NONMDA
 dt$ind_nonmda_eb_share=round(dt$QTY_EB_IND_NONMDA/dt$QTY_IND_NONMDA,4) # EB voume share
@@ -190,7 +190,7 @@ dt_selected=dt[,c('Quarter_number',
 'Price_approval_share',
 'tgp_cs_ind_nonmda',
 'ind_share',
-'ind_mda_share',
+'ind_nonmda_share',
 'ind_nonmda_eb_share',
 'ind_nonmda_packer_share',
 'cop',
@@ -295,7 +295,7 @@ model1=lm(log(tgp_cs_ind_nonmda)~.-QTY_AMERICANMENU_IND_NONMDA
           #-Investment.PerCS
           #-priceIndex
           #-cop_share
-          
+          #- ind_nonmda_share
           -Correct_Invoices
           -DamageFree_Orders
           -OnTime_Orders
@@ -303,8 +303,10 @@ model1=lm(log(tgp_cs_ind_nonmda)~.-QTY_AMERICANMENU_IND_NONMDA
 summary(model1)
 model2=step(model1,direction = "both")
 summary(model2)
-
 formula(model2)
+
+library(rms)
+vifs_data=rms::vif(model2)
 
 plot(exp(model2$fitted.values),dt.numerics$tgp_cs_ind_nonmda)
 # bootstrapping with 5000 replications 
@@ -317,8 +319,6 @@ hist(sa, layout=c(1, 3))
 confint(sa,type='bca')
 
 #names(dt.numerics)
-library(rms)
-vifs_data=rms::vif(model2)
 #write.csv(vifs_data,"vif_dat a.csv")
 
 ########################################
