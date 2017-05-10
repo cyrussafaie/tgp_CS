@@ -16,6 +16,11 @@ library(ggplot2)
 ##Variable Extraction
 ###################
 ###################
+#fixing 52 weeks issue of the 
+
+for (i in c(14:22,27:63)){
+dt[,i]=ifelse(dt$FISC_YR_MTH=='201512',round(dt[,i]*4/5,0),dt[,i])
+}
 
 dt$tgp_cs_ind_nonmda=round(dt$TGP_IND_NONMDA/dt$QTY_IND_NONMDA,4)#output
 
@@ -34,31 +39,31 @@ dt$ind_nonmda_packer_share=round(dt$QTY_PACKER_IND_NONMDA/(dt$QTY_IND_NONMDA-dt$
 #shares  doesn't seem reasonable due to dependencies: Grouping to COP, Grocery and dry?,
 #grouping the volumes
 #COP:poultry,beef,pork,seafood,specialty meat
-# dt$poultry_share=round(dt$QTY_POULTRY_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$pork_share=round(dt$QTY_PORK_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$seafood_share=round(dt$QTY_SEAFOOD_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$beef_share=round(dt$QTY_BEEF_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$poultry_share=round(dt$QTY_POULTRY_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$pork_share=round(dt$QTY_PORK_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$seafood_share=round(dt$QTY_SEAFOOD_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$beef_share=round(dt$QTY_BEEF_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 # 
-# dt$canned_share=round(dt$QTY_CANFRUITVEG_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$groceryfrozen_share=round(dt$QTY_GROCERYFROZEN_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$chemical_share=round(dt$QTY_CHEMICAL_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$dairy_share=round(dt$QTY_DAIRY_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$oil_share=round(dt$QTY_OIL_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$processedmeat_share=round(dt$QTY_PROCESSEDMEAT_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$disposable_share=round(dt$QTY_DISPOSABLE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$beverage_share=round(dt$QTY_BEVERAGE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$apperizer_share=round(dt$QTY_APPETIZER_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$cheese_share=round(dt$QTY_CHEESE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$produce_share=round(dt$QTY_PRODUCE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$canned_share=round(dt$QTY_CANFRUITVEG_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$groceryfrozen_share=round(dt$QTY_GROCERYFROZEN_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$chemical_share=round(dt$QTY_CHEMICAL_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$dairy_share=round(dt$QTY_DAIRY_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$oil_share=round(dt$QTY_OIL_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$processedmeat_share=round(dt$QTY_PROCESSEDMEAT_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$disposable_share=round(dt$QTY_DISPOSABLE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$beverage_share=round(dt$QTY_BEVERAGE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$apperizer_share=round(dt$QTY_APPETIZER_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$cheese_share=round(dt$QTY_CHEESE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$produce_share=round(dt$QTY_PRODUCE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 # 
-# dt$american_share=round(dt$QTY_AMERICANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$classic_share=round(dt$QTY_CLASSICMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$italian_share=round(dt$QTY_ITALYPIT_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$mexican_share=round(dt$QTY_MEXIICANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$bar_share=round(dt$QTY_BARMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$deli_share=round(dt$QTY_DELIMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$steak_share=round(dt$QTY_STEAKMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-# dt$otherasian_share=round(dt$QTY_OTHASIANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$american_share=round(dt$QTY_AMERICANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$classic_share=round(dt$QTY_CLASSICMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$italian_share=round(dt$QTY_ITALYPIT_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$mexican_share=round(dt$QTY_MEXIICANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$bar_share=round(dt$QTY_BARMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$deli_share=round(dt$QTY_DELIMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$steak_share=round(dt$QTY_STEAKMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$otherasian_share=round(dt$QTY_OTHASIANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 dt$cop=dt$QTY_POULTRY_IND_NONMDA+dt$QTY_BEEF_IND_NONMDA+dt$QTY_SEAFOOD_IND_NONMDA+dt$QTY_PORK_IND_NONMDA+dt$QTY_SPECIALTYMEAT_IND_NONMDA+dt$QTY_PROCESSEDMEAT_IND_NONMDA
 dt$cop_share=(dt$QTY_POULTRY_IND_NONMDA+dt$QTY_BEEF_IND_NONMDA+dt$QTY_SEAFOOD_IND_NONMDA+dt$QTY_PORK_IND_NONMDA+dt$QTY_SPECIALTYMEAT_IND_NONMDA+dt$QTY_PROCESSEDMEAT_IND_NONMDA)/dt$QTY_IND_NONMDA
           
@@ -200,10 +205,37 @@ dt_selected=dt[,c('Quarter_number',
 'new_share',
 'account_per_tm',
 'sales_per_tm',
-'trend')]
-
+'trend'
+# ,
+#added just for testing
+# 'poultry_share',
+# 'pork_share',                       
+# 'seafood_share',
+# 'beef_share',
+# 'canned_share',
+# 'groceryfrozen_share',
+# 'chemical_share',
+# 'dairy_share',                      
+# 'oil_share',
+# 'processedmeat_share',              
+# 'disposable_share',
+# 'beverage_share',                   
+# 'apperizer_share',
+# 'cheese_share',                     
+# 'produce_share',
+# 'american_share',                   
+# 'classic_share',
+# 'italian_share',                    
+# 'mexican_share',
+# 'bar_share',                        
+# 'deli_share',
+# 'steak_share',                      
+# 'otherasian_share'
+)]
+names(dt_selected)
 dim(dt_selected)
-
+corrplot::corrplot.mixed(corr = cor(dt_selected[,c(45,2:16)]),number.cex=0.65,tl.cex = .5)
+corrplot::corrplot.mixed(corr = cor(dt_selected[,58:80]),number.cex=0.65,tl.cex = .5)
 ########################################
 ########################################
 ########################################
@@ -250,7 +282,7 @@ corPlusSign_joint=merge(corPlusSign,corPlusSign2,by = c("row","column"))
 head(corPlusSign_joint)
 #write.csv(corPlusSign_joint,"correlationMAtrixDetail.csv",row.names = F)
 
-
+#write.csv(dt,"data_explore.csv",row.names = F)
 ########################################
 ########################################
 ########################################
@@ -266,7 +298,8 @@ head(corPlusSign_joint)
 # more variables usually increase the rate
 # Centering a predictor merely entails subtracting the mean of the predictor values in the data set from each predictor value.
 
-model1=lm(log(tgp_cs_ind_nonmda)~.-QTY_AMERICANMENU_IND_NONMDA
+model1=lm(log(tgp_cs_ind_nonmda)~.
+          -QTY_AMERICANMENU_IND_NONMDA
           -QTY_APPETIZER_IND_NONMDA
           -QTY_BARMENU_IND_NONMDA
           -QTY_BEEF_IND_NONMDA
@@ -301,10 +334,10 @@ model1=lm(log(tgp_cs_ind_nonmda)~.-QTY_AMERICANMENU_IND_NONMDA
           -OnTime_Orders
           , data = dt.numerics)
 summary(model1)
-model2=step(model1,direction = "both")
+model2=step(model1,direction = "backward")
 summary(model2)
 formula(model2)
-
+drop1(model2,test = "Chisq")
 library(rms)
 vifs_data=rms::vif(model2)
 
