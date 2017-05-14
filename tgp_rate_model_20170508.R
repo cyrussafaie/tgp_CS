@@ -28,55 +28,55 @@ dt$ind_share=round(dt$QTY_IND/dt$QTY_TTL,4)#ind share of total DC volume sold
 
 dt$sell_prc_ind_nonmda= round(dt$SALES_IND_NONMDA/dt$QTY_IND_NONMDA,4) #Avergae Sell Price
 dt$tgp_per_drop=round(dt$TGP_IND_NONMDA_RT_TYPE/dt$DROP_CNT_IND_NONMDA,4) # TGP per drop: probably too obvious to use
-dt$sales_per_drop=round(dt$SALES_IND_NONMDA/dt$DROP_CNT_IND_NONMDA,4) #sales per drop 
-dt$ave_customer_size=round(dt$SALES_IND_NONMDA,dt$CUSTOMER_CNT_IND_NONMDA) #average customer sales size
+dt$sales_per_drop=round(dt$SALES_IND_NONMDA/dt$DROP_CNT_IND_NONMDA,0) #sales per drop 
+dt$ave_customer_size=round(dt$SALES_IND_NONMDA,dt$CUSTOMER_CNT_IND_NONMDA,0) #average customer sales size
 
-dt$ind_nonmda_share=round(dt$QTY_IND_NONMDA/dt$QTY_IND,4) #mda share of IND
+dt$ind_nonmda_share=100*round(dt$QTY_IND_NONMDA/dt$QTY_IND,4) #mda share of IND
 
 #dt$indnonmdalocal_share=dt$QTY_IND_NONMDA_LOCAL/dt$QTY_IND_NONMDA
-dt$ind_nonmda_eb_share=round(dt$QTY_EB_IND_NONMDA/dt$QTY_IND_NONMDA,4) # EB voume share
-dt$ind_nonmda_packer_share=round(dt$QTY_PACKER_IND_NONMDA/(dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA),4) #packer share of MB
-dt$ind_nonmda_packer_share=round((dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA-dt$qty)/(dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA),4) #customer owned share of MB
+dt$ind_nonmda_eb_share=100*round(dt$QTY_EB_IND_NONMDA/dt$QTY_IND_NONMDA,4) # EB voume share
+dt$ind_nonmda_packer_share=100*round(dt$QTY_PACKER_IND_NONMDA/(dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA),4) #packer share of MB
+dt$ind_nonmda_packer_share=100*round(dt$QTY_PACKER_IND_NONMDA)/(dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA),4) #customer owned share of MB
 #shares  doesn't seem reasonable due to dependencies: Grouping to COP, Grocery and dry?,
 #grouping the volumes
 #COP:poultry,beef,pork,seafood,specialty meat
-dt$poultry_share=round(dt$QTY_POULTRY_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$pork_share=round(dt$QTY_PORK_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$seafood_share=round(dt$QTY_SEAFOOD_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$beef_share=round(dt$QTY_BEEF_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$poultry_share=100*round(dt$QTY_POULTRY_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$pork_share=100*round(dt$QTY_PORK_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$seafood_share=100*round(dt$QTY_SEAFOOD_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$beef_share=100*round(dt$QTY_BEEF_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 # 
-dt$canned_share=round(dt$QTY_CANFRUITVEG_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$groceryfrozen_share=round(dt$QTY_GROCERYFROZEN_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$chemical_share=round(dt$QTY_CHEMICAL_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$dairy_share=round(dt$QTY_DAIRY_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$oil_share=round(dt$QTY_OIL_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$processedmeat_share=round(dt$QTY_PROCESSEDMEAT_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$disposable_share=round(dt$QTY_DISPOSABLE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$beverage_share=round(dt$QTY_BEVERAGE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$apperizer_share=round(dt$QTY_APPETIZER_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$cheese_share=round(dt$QTY_CHEESE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$produce_share=round(dt$QTY_PRODUCE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$canned_share=100*round(dt$QTY_CANFRUITVEG_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$groceryfrozen_share=100*round(dt$QTY_GROCERYFROZEN_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$chemical_share=100*round(dt$QTY_CHEMICAL_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$dairy_share=100*round(dt$QTY_DAIRY_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$oil_share=100*round(dt$QTY_OIL_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$processedmeat_share=100*round(dt$QTY_PROCESSEDMEAT_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$disposable_share=100*round(dt$QTY_DISPOSABLE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$beverage_share=100*round(dt$QTY_BEVERAGE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$apperizer_share=100*round(dt$QTY_APPETIZER_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$cheese_share=100*round(dt$QTY_CHEESE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$produce_share=100*round(dt$QTY_PRODUCE_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 # 
-dt$american_share=round(dt$QTY_AMERICANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$classic_share=round(dt$QTY_CLASSICMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$italian_share=round(dt$QTY_ITALYPIT_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$mexican_share=round(dt$QTY_MEXIICANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$bar_share=round(dt$QTY_BARMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$deli_share=round(dt$QTY_DELIMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$steak_share=round(dt$QTY_STEAKMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
-dt$otherasian_share=round(dt$QTY_OTHASIANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$american_share=100*round(dt$QTY_AMERICANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$classic_share=100*round(dt$QTY_CLASSICMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$italian_share=100*round(dt$QTY_ITALYPIT_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$mexican_share=100*round(dt$QTY_MEXIICANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$bar_share=100*round(dt$QTY_BARMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$deli_share=100*round(dt$QTY_DELIMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$steak_share=100*round(dt$QTY_STEAKMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$otherasian_share=100*round(dt$QTY_OTHASIANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 dt$cop=dt$QTY_POULTRY_IND_NONMDA+dt$QTY_BEEF_IND_NONMDA+dt$QTY_SEAFOOD_IND_NONMDA+dt$QTY_PORK_IND_NONMDA+dt$QTY_SPECIALTYMEAT_IND_NONMDA+dt$QTY_PROCESSEDMEAT_IND_NONMDA
-dt$cop_share=(dt$QTY_POULTRY_IND_NONMDA+dt$QTY_BEEF_IND_NONMDA+dt$QTY_SEAFOOD_IND_NONMDA+dt$QTY_PORK_IND_NONMDA+dt$QTY_SPECIALTYMEAT_IND_NONMDA+dt$QTY_PROCESSEDMEAT_IND_NONMDA)/dt$QTY_IND_NONMDA
+dt$cop_share=100*(dt$QTY_POULTRY_IND_NONMDA+dt$QTY_BEEF_IND_NONMDA+dt$QTY_SEAFOOD_IND_NONMDA+dt$QTY_PORK_IND_NONMDA+dt$QTY_SPECIALTYMEAT_IND_NONMDA+dt$QTY_PROCESSEDMEAT_IND_NONMDA)/dt$QTY_IND_NONMDA
           
-dt$typeA_share=round(dt$QTY_CUSTA_IND_NONMDA/dt$QTY_IND_NONMDA,4) #type A colume share
+dt$typeA_share=100*round(dt$QTY_CUSTA_IND_NONMDA/dt$QTY_IND_NONMDA,4) #type A colume share
 #dt$typeC_share=round(dt$QTY_CUSTC_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 
-dt$prime_share=round(dt$QTY_PRIME_IND_NONMDA/dt$QTY_IND_NONMDA,4) #prime share of IND non mda
+dt$prime_share=100*round(dt$QTY_PRIME_IND_NONMDA/dt$QTY_IND_NONMDA,4) #prime share of IND non mda
 
-dt$new_share=round(dt$QTY_CUSTNEW_IND_NONMDA/dt$QTY_IND_NONMDA,4) #new customer Volume share
+dt$new_share=100*round(dt$QTY_CUSTNEW_IND_NONMDA/dt$QTY_IND_NONMDA,4) #new customer Volume share
 #dt$prior_share=dt$QTY_CUSTPRIOR_IND_NONMDA/dt$QTY_IND_NONMDA
 
-dt$account_per_tm= dt$CUSTOMER_CNT_IND_NONMDA/dt$TM_CNT_IND_NONMDA
+dt$account_per_tm=dt$CUSTOMER_CNT_IND_NONMDA/dt$TM_CNT_IND_NONMDA
 dt$sales_per_tm= dt$SALES_IND_NONMDA/dt$TM_CNT_IND_NONMDA
 
 dt$LIC_per_CS=round(dt$LIC_IND_NONMDA/dt$QTY_IND_NONMDA,4)
@@ -84,6 +84,31 @@ dt$TMC_per_CS=round(dt$TMC_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 
 #trend line for tgp rate
 dt$trend=rep(1:51,56)
+###################
+###################
+##unit of measures changes to what we intend to interpret
+###################
+###################
+dt$EcomPenetration=100*dt$EcomPenetration
+dt$Correct_Invoices=100*dt$Correct_Invoices
+dt$Complete_Orders=100*dt$Complete_Orders
+dt$DamageFree_Orders=100*dt$DamageFree_Orders
+dt$OnTime_Orders=100*dt$OnTime_Orders
+dt$POI=100*dt$POI
+dt$YOYgrowth=100*dt$YOYgrowth
+dt$priceIndex=100*dt$priceIndex
+dt$CustomMarketIndexCMI=100*dt$CustomMarketIndexCMI
+dt$USFMarketShareStatic=100*dt$USFMarketShareStatic
+dt$Churn_true=100*dt$Churn_true
+dt$Investment.Spend.CS.participation=100*dt$Investment.Spend.CS.participation
+dt$CBA_share=100*dt$CBA_share
+dt$DonD._Share=100*dt$DonD._Share
+dt$Fixed_sell_share=100*dt$Fixed_sell_share
+dt$Price_approval_share=100*dt$Price_approval_share
+dt$ind_share=100*dt$ind_share
+
+
+
 names(dt)
 str(dt,list.len = 999)
 #a=dt[1:2,]
@@ -142,6 +167,10 @@ ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
           geom_smooth(method=lm)   # Add linear regression line 
 #  (by default includes 95% confidence region)
 
+mod=lm(log(tgp_cs_ind_nonmda)~LIC_per_CS+sell_prc_ind_nonmda,data=dt)
+summary(mod)
+library(rms)
+vifs_data=rms::vif(mod)
 #houston seems to have high price with low tgp/cs
 
 ########################################
