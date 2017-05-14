@@ -18,7 +18,7 @@ library(ggplot2)
 ###################
 #fixing 52 weeks issue of the 
 
-for (i in c(14:22,27:63)){
+for (i in c(14:22,27:63,88:89)){
 dt[,i]=ifelse(dt$FISC_YR_MTH=='201512',round(dt[,i]*4/5,0),dt[,i])
 }
 
@@ -28,14 +28,15 @@ dt$ind_share=round(dt$QTY_IND/dt$QTY_TTL,4)#ind share of total DC volume sold
 
 dt$sell_prc_ind_nonmda= round(dt$SALES_IND_NONMDA/dt$QTY_IND_NONMDA,4) #Avergae Sell Price
 dt$tgp_per_drop=round(dt$TGP_IND_NONMDA_RT_TYPE/dt$DROP_CNT_IND_NONMDA,4) # TGP per drop: probably too obvious to use
-dt$tgp_per_drop=round(dt$SALES_IND_NONMDA/dt$DROP_CNT_IND_NONMDA,4) #sales per drop 
+dt$sales_per_drop=round(dt$SALES_IND_NONMDA/dt$DROP_CNT_IND_NONMDA,4) #sales per drop 
+dt$ave_customer_size=round(dt$SALES_IND_NONMDA,dt$CUSTOMER_CNT_IND_NONMDA) #average customer sales size
 
 dt$ind_nonmda_share=round(dt$QTY_IND_NONMDA/dt$QTY_IND,4) #mda share of IND
 
 #dt$indnonmdalocal_share=dt$QTY_IND_NONMDA_LOCAL/dt$QTY_IND_NONMDA
 dt$ind_nonmda_eb_share=round(dt$QTY_EB_IND_NONMDA/dt$QTY_IND_NONMDA,4) # EB voume share
 dt$ind_nonmda_packer_share=round(dt$QTY_PACKER_IND_NONMDA/(dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA),4) #packer share of MB
-
+dt$ind_nonmda_packer_share=round((dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA-dt$qty)/(dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA),4) #customer owned share of MB
 #shares  doesn't seem reasonable due to dependencies: Grouping to COP, Grocery and dry?,
 #grouping the volumes
 #COP:poultry,beef,pork,seafood,specialty meat
@@ -77,6 +78,9 @@ dt$new_share=round(dt$QTY_CUSTNEW_IND_NONMDA/dt$QTY_IND_NONMDA,4) #new customer 
 
 dt$account_per_tm= dt$CUSTOMER_CNT_IND_NONMDA/dt$TM_CNT_IND_NONMDA
 dt$sales_per_tm= dt$SALES_IND_NONMDA/dt$TM_CNT_IND_NONMDA
+
+dt$LIC_per_CS=round(dt$LIC_IND_NONMDA/dt$QTY_IND_NONMDA,4)
+dt$TMC_per_CS=round(dt$TMC_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 
 #trend line for tgp rate
 dt$trend=rep(1:51,56)
@@ -334,7 +338,7 @@ model1=lm(log(tgp_cs_ind_nonmda)~.
           -OnTime_Orders
           , data = dt.numerics)
 summary(model1)
-model2=step(model1,direction = "backward")
+model2=step(model1,direction = "both")
 summary(model2)
 formula(model2)
 drop1(model2,test = "Chisq")
@@ -411,3 +415,13 @@ dt[948:949,]
 
 dt1=dt
 dt1$Investment.Spend.CS.participation[949]=0.0001
+########################################
+########################################
+########################################
+# USF BCG Rank dump 
+# drop Investment.PerCS
+# average account size
+# LIC as an absolute value
+########################################
+########################################
+########################################
