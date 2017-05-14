@@ -29,14 +29,13 @@ dt$ind_share=round(dt$QTY_IND/dt$QTY_TTL,4)#ind share of total DC volume sold
 dt$sell_prc_ind_nonmda= round(dt$SALES_IND_NONMDA/dt$QTY_IND_NONMDA,4) #Avergae Sell Price
 dt$tgp_per_drop=round(dt$TGP_IND_NONMDA_RT_TYPE/dt$DROP_CNT_IND_NONMDA,4) # TGP per drop: probably too obvious to use
 dt$sales_per_drop=round(dt$SALES_IND_NONMDA/dt$DROP_CNT_IND_NONMDA,0) #sales per drop 
-dt$ave_customer_size=round(dt$SALES_IND_NONMDA,dt$CUSTOMER_CNT_IND_NONMDA,0) #average customer sales size
+dt$ave_customer_size=round(dt$SALES_IND_NONMDA/dt$CUSTOMER_CNT_IND_NONMDA,0) #average customer sales size
 
 dt$ind_nonmda_share=100*round(dt$QTY_IND_NONMDA/dt$QTY_IND,4) #mda share of IND
 
 #dt$indnonmdalocal_share=dt$QTY_IND_NONMDA_LOCAL/dt$QTY_IND_NONMDA
 dt$ind_nonmda_eb_share=100*round(dt$QTY_EB_IND_NONMDA/dt$QTY_IND_NONMDA,4) # EB voume share
 dt$ind_nonmda_packer_share=100*round(dt$QTY_PACKER_IND_NONMDA/(dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA),4) #packer share of MB
-dt$ind_nonmda_packer_share=100*round(dt$QTY_PACKER_IND_NONMDA)/(dt$QTY_IND_NONMDA-dt$QTY_EB_IND_NONMDA),4) #customer owned share of MB
 #shares  doesn't seem reasonable due to dependencies: Grouping to COP, Grocery and dry?,
 #grouping the volumes
 #COP:poultry,beef,pork,seafood,specialty meat
@@ -162,15 +161,12 @@ names(dt)
 
 
 
-ggplot(dt, aes(x=sell_prc_ind_nonmda, y=tgp_cs_ind_nonmda)) +
+ggplot(dt, aes(x=sell_prc_ind_nonmda+LIC_per_CS, y=tgp_cs_ind_nonmda)) +
           geom_point(shape=1) +    # Use hollow circles
           geom_smooth(method=lm)   # Add linear regression line 
 #  (by default includes 95% confidence region)
-
-mod=lm(log(tgp_cs_ind_nonmda)~LIC_per_CS+sell_prc_ind_nonmda,data=dt)
-summary(mod)
-library(rms)
-vifs_data=rms::vif(mod)
+write.csv(dt,"data_all_20170514.csv",row.names = F)
+write.csv(dt[1:2,],"var_20170514.csv")
 #houston seems to have high price with low tgp/cs
 
 ########################################
