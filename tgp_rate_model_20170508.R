@@ -178,6 +178,8 @@ dim(dt)
 #write.csv(dt[1:3,],"variable_list.csv")
 dim(dt)
 dt_selected=dt[,c('divPEriod',
+                  'FISC_YR_MTH',
+                  'FISC_YR',
                   'Quarter_number',
                   'CUSTOMER_CNT_IND_NONMDA',
                   'TM_CNT_IND_NONMDA',
@@ -263,12 +265,39 @@ dt_selected=dt[,c('divPEriod',
                   'trend'
 )]
 
+########################################
+########################################
+########################################
+#train-test split for 
+########################################
+########################################
+########################################
+
+#initial split by time
+test_ind_16q4after <- which(dt_selected$FISC_YR == 2017 | dt_selected$FISC_YR_MTH %in% c(201612,201611,201610))
+test1<- dt_selected[test_ind_16q4after, ]
+train1= dt_selected[-test_ind_16q4after, ]
+
+#random split
+set.seed(60134)
+test_random <-sample(seq_along(dt_selected$divPEriod),dim(dt_selected)[1]*0.2) 
+test2=dt_selected[test_random,]
+train2=dt_selected[-test_random,]
+dim(test1)
+names(test1)
 
 #this is very much overfitted with many correlated variables
-mod=lm(log(tgp_cs_ind_nonmda)~.-divPEriod, data = dt_selected)
+mod=lm(log(tgp_cs_ind_nonmda)~.
+       -divPEriod
+       -FISC_YR_MTH
+       -FISC_YR, data = train2)
 summary(mod)
 mods=step(mod,direction = "both")
 summary(mods)
+yhat=predict(mods,newdata = test2)
+
+cor(log(test2$tgp_cs_ind_nonmda),yhat)^2
+
 library(car)
 vifs_data=car::vif(mods)
 confint(mods)
