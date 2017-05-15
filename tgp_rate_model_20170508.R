@@ -158,13 +158,10 @@ for (j in 1:3) {
 }
 summary(dt)
 names(dt)
+dim(dt)
 
-
-
-ggplot(dt, aes(x=sell_prc_ind_nonmda+LIC_per_CS, y=tgp_cs_ind_nonmda)) +
-          geom_point(shape=1) +    # Use hollow circles
-          geom_smooth(method=lm)   # Add linear regression line 
-#  (by default includes 95% confidence region)
+#saveRDS(dt,"data_full_20170514.rds")
+#dt=readRDS("data_full_20170514.rds")
 
 #write.csv(dt,"data_all_20170514.csv",row.names = F)
 #write.csv(dt[1:2,],"var_20170514.csv")
@@ -275,6 +272,23 @@ summary(mods)
 library(car)
 vifs_data=car::vif(mods)
 confint(mods)
+
+########################################
+########################################
+########################################
+# function designed to get rsq and rsquared adjusted
+########################################
+########################################
+########################################
+calculated_rsq=function(dt_selected,mods){
+rsquared_calc=cor(log(dt_selected$tgp_cs_ind_nonmda),mods$fitted.values)^2
+adj_rsquared_calc=1-(((1-rsquared_calc)*(dim(dt_selected)[1]-1))/(dim(dt_selected)[1]-dim(dt_selected)[2]-1))
+rsqs=cbind(rsquared_calc,adj_rsquared_calc)
+return(rsqs)
+}
+calculated_rsq(dt_selected,mods)
+
+
 #now let's try ridge and lasso
 dim(dt_selected)
 set.seed(60134)
@@ -288,7 +302,10 @@ confint(mods)
 par(mfrow=c(2,2))
 plot(mods2)
 par(mfrow=c(2,2))
-plot(mods)
+plot(mods2)
+
+
+dt_selected[786,]
 
 names(dt_selected)
 dim(dt_selected)
