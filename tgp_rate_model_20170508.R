@@ -165,8 +165,10 @@ ggplot(dt, aes(x=sell_prc_ind_nonmda+LIC_per_CS, y=tgp_cs_ind_nonmda)) +
           geom_point(shape=1) +    # Use hollow circles
           geom_smooth(method=lm)   # Add linear regression line 
 #  (by default includes 95% confidence region)
-write.csv(dt,"data_all_20170514.csv",row.names = F)
-write.csv(dt[1:2,],"var_20170514.csv")
+
+#write.csv(dt,"data_all_20170514.csv",row.names = F)
+#write.csv(dt[1:2,],"var_20170514.csv")
+
 #houston seems to have high price with low tgp/cs
 
 ########################################
@@ -178,89 +180,116 @@ write.csv(dt[1:2,],"var_20170514.csv")
 ########################################
 #write.csv(dt[1:3,],"variable_list.csv")
 dim(dt)
-dt_selected=dt[,c('Quarter_number',
-'QTY_POULTRY_IND_NONMDA',
-'QTY_PORK_IND_NONMDA',
-'QTY_CANFRUITVEG_IND_NONMDA',
-'QTY_GROCERYFROZEN_IND_NONMDA',
-'QTY_CHEMICAL_IND_NONMDA',
-'QTY_DAIRY_IND_NONMDA',
-'QTY_OIL_IND_NONMDA',
-'QTY_BEEF_IND_NONMDA',
-'QTY_PROCESSEDMEAT_IND_NONMDA',
-'QTY_DISPOSABLE_IND_NONMDA',
-'QTY_SEAFOOD_IND_NONMDA',
-'QTY_BEVERAGE_IND_NONMDA',
-'QTY_APPETIZER_IND_NONMDA',
-'QTY_CHEESE_IND_NONMDA',
-'QTY_PRODUCE_IND_NONMDA',
-'QTY_CLASSICMENU_IND_NONMDA',
-'QTY_ITALYPIT_IND_NONMDA',
-'QTY_AMERICANMENU_IND_NONMDA',
-'QTY_MEXIICANMENU_IND_NONMDA',
-'QTY_BARMENU_IND_NONMDA',
-'QTY_DELIMENU_IND_NONMDA',
-'QTY_STEAKMENU_IND_NONMDA',
-'QTY_OTHASIANMENU_IND_NONMDA',
-'EcomPenetration',
-'Correct_Invoices',
-'Complete_Orders',
-'DamageFree_Orders',
-'OnTime_Orders',
-'POI',
-'YOYgrowth',
-'priceIndex',
-'nps',
-'Organized',
-'USFRank_BCG',
-'CustomMarketIndexCMI',
-'USFMarketShareStatic',
-'Cust_Tenure_mnth',
-'TM_Tenure_mnth',
-'Churn_true',
-'Investment.Spend.CS.participation',
-'Investment.PerCS',
-'DonD._Share',
-'Price_approval_share',
-'tgp_cs_ind_nonmda',
-'ind_share',
-'ind_nonmda_share',
-'ind_nonmda_eb_share',
-'ind_nonmda_packer_share',
-'cop',
-'cop_share',
-'typeA_share',
-'prime_share',
-'new_share',
-'account_per_tm',
-'sales_per_tm',
-'trend'
-# ,
-#added just for testing
-# 'poultry_share',
-# 'pork_share',                       
-# 'seafood_share',
-# 'beef_share',
-# 'canned_share',
-# 'groceryfrozen_share',
-# 'chemical_share',
-# 'dairy_share',                      
-# 'oil_share',
-# 'processedmeat_share',              
-# 'disposable_share',
-# 'beverage_share',                   
-# 'apperizer_share',
-# 'cheese_share',                     
-# 'produce_share',
-# 'american_share',                   
-# 'classic_share',
-# 'italian_share',                    
-# 'mexican_share',
-# 'bar_share',                        
-# 'deli_share',
-# 'steak_share',                      
-# 'otherasian_share'
+dt_selected=dt[,c('divPEriod',
+                  'Quarter_number',
+                  'CUSTOMER_CNT_IND_NONMDA',
+                  'TM_CNT_IND_NONMDA',
+                  'QTY_POULTRY_IND_NONMDA',
+                  'QTY_PORK_IND_NONMDA',
+                  'QTY_CANFRUITVEG_IND_NONMDA',
+                  'QTY_GROCERYFROZEN_IND_NONMDA',
+                  'QTY_CHEMICAL_IND_NONMDA',
+                  'QTY_DAIRY_IND_NONMDA',
+                  'QTY_SALAD_IND_NONMDA',
+                  'QTY_OIL_IND_NONMDA',
+                  'QTY_BEEF_IND_NONMDA',
+                  'QTY_SPECIALTYMEAT_IND_NONMDA',
+                  'QTY_PROCESSEDMEAT_IND_NONMDA',
+                  'QTY_DISPOSABLE_IND_NONMDA',
+                  'QTY_SEAFOOD_IND_NONMDA',
+                  'QTY_BEVERAGE_IND_NONMDA',
+                  'QTY_APPETIZER_IND_NONMDA',
+                  'QTY_CHEESE_IND_NONMDA',
+                  'QTY_PRODUCE_IND_NONMDA',
+                  'EcomPenetration',
+                  'Correct_Invoices',
+                  'Complete_Orders',
+                  'DamageFree_Orders',
+                  'OnTime_Orders',
+                  'POI',
+                  'YOYgrowth',
+                  'priceIndex',
+                  'nps',
+                  'Organized',
+                  'USFRank_BCG',
+                  'CustomMarketIndexCMI',
+                  'USFMarketShareStatic',
+                  'Cust_Tenure_mnth',
+                  'TM_Tenure_mnth',
+                  'Churn_true',
+                  'Investment.Spend.CS.participation',
+                  'Investment.PerCS',
+                  'CBA_share',
+                  'DonD._Share',
+                  'Fixed_sell_share',
+                  'Price_approval_share',
+                  'tgp_cs_ind_nonmda',
+                  'ind_share',
+                  'sell_prc_ind_nonmda',
+                  'tgp_per_drop',
+                  'sales_per_drop',
+                  'ave_customer_size',
+                  'ind_nonmda_share',
+                  'ind_nonmda_eb_share',
+                  'ind_nonmda_packer_share',
+                  'poultry_share',
+                  'pork_share',
+                  'seafood_share',
+                  'beef_share',
+                  'canned_share',
+                  'groceryfrozen_share',
+                  'chemical_share',
+                  'dairy_share',
+                  'oil_share',
+                  'processedmeat_share',
+                  'disposable_share',
+                  'beverage_share',
+                  'apperizer_share',
+                  'cheese_share',
+                  'produce_share',
+                  'american_share',
+                  'classic_share',
+                  'italian_share',
+                  'mexican_share',
+                  'bar_share',
+                  'deli_share',
+                  'steak_share',
+                  'otherasian_share',
+                  'cop_share',
+                  'typeA_share',
+                  'prime_share',
+                  'new_share',
+                  'account_per_tm',
+                  'sales_per_tm',
+                  'LIC_per_CS',
+                  'TMC_per_CS',
+                  'trend'
 )]
+
+
+#this is very much overfitted with many correlated variables
+mod=lm(log(tgp_cs_ind_nonmda)~.-divPEriod, data = dt_selected)
+summary(mod)
+mods=step(mod,direction = "both")
+summary(mods)
+library(car)
+vifs_data=car::vif(mods)
+confint(mods)
+#now let's try ridge and lasso
+dim(dt_selected)
+set.seed(60134)
+mod2=lm(log(tgp_cs_ind_nonmda)~.-divPEriod, data = dt_selected[sample(1:2112,1500),])
+summary(mod2)
+mods2=step(mod2,direction = "both")
+summary(mods2)
+library(car)
+vifs_data2=car::vif(mods2)
+confint(mods)
+par(mfrow=c(2,2))
+plot(mods2)
+par(mfrow=c(2,2))
+plot(mods)
+
 names(dt_selected)
 dim(dt_selected)
 corrplot::corrplot.mixed(corr = cor(dt_selected[,c(45,2:16)]),number.cex=0.65,tl.cex = .5)
