@@ -264,6 +264,7 @@ dt_selected=dt[,c('divPEriod',
                   'TMC_per_CS',
                   'trend'
 )]
+dt_selected$Quarter_number=factor(dt_selected$Quarter_number)
 
 ########################################
 ########################################
@@ -273,35 +274,212 @@ dt_selected=dt[,c('divPEriod',
 ########################################
 ########################################
 
-#initial split by time
+# 1.initial split by time
 test_ind_16q4after <- which(dt_selected$FISC_YR == 2017 | dt_selected$FISC_YR_MTH %in% c(201612,201611,201610))
 test1<- dt_selected[test_ind_16q4after, ]
 train1= dt_selected[-test_ind_16q4after, ]
 
-#random split
+# 2.random split
 set.seed(60134)
 test_random <-sample(seq_along(dt_selected$divPEriod),dim(dt_selected)[1]*0.2) 
 test2=dt_selected[test_random,]
 train2=dt_selected[-test_random,]
-dim(test1)
-names(test1)
 
-#this is very much overfitted with many correlated variables
-mod=lm(log(tgp_cs_ind_nonmda)~.
-       -divPEriod
-       -FISC_YR_MTH
-       -FISC_YR, data = train2)
-summary(mod)
-mods=step(mod,direction = "both")
-summary(mods)
-yhat=predict(mods,newdata = test2)
+########################################
+########################################
+########################################
+# variables to use
+########################################
+########################################
+########################################
+#write.csv(dt[1:3,],"variable_list.csv")
 
-cor(log(test2$tgp_cs_ind_nonmda),yhat)^2
+dim(dt)
+covar_select=c(
+          #'divPEriod',
+                  # 'FISC_YR_MTH',
+                  # 'FISC_YR',
+                  #'Quarter_number',
+                  # 'CUSTOMER_CNT_IND_NONMDA',
+                  # 'TM_CNT_IND_NONMDA',
+                  # 'QTY_POULTRY_IND_NONMDA',
+                  # 'QTY_PORK_IND_NONMDA',
+                  # 'QTY_CANFRUITVEG_IND_NONMDA',
+                  # 'QTY_GROCERYFROZEN_IND_NONMDA',
+                  # 'QTY_CHEMICAL_IND_NONMDA',
+                  # 'QTY_DAIRY_IND_NONMDA',
+                  # 'QTY_SALAD_IND_NONMDA',
+                  # 'QTY_OIL_IND_NONMDA',
+                  # 'QTY_BEEF_IND_NONMDA',
+                  # 'QTY_SPECIALTYMEAT_IND_NONMDA',
+                  # 'QTY_PROCESSEDMEAT_IND_NONMDA',
+                  # 'QTY_DISPOSABLE_IND_NONMDA',
+                  # 'QTY_SEAFOOD_IND_NONMDA',
+                  # 'QTY_BEVERAGE_IND_NONMDA',
+                  # 'QTY_APPETIZER_IND_NONMDA',
+                  # 'QTY_CHEESE_IND_NONMDA',
+                  # 'QTY_PRODUCE_IND_NONMDA',
+                  'EcomPenetration',
+                   # 'Correct_Invoices',
+                   # 'Complete_Orders',
+                   # 'DamageFree_Orders',
+                   # 'OnTime_Orders',
+                  'POI',
+                  'YOYgrowth',
+                  'priceIndex',
+                  'nps',
+                  'Organized',
+                  #'USFRank_BCG',
+                  'CustomMarketIndexCMI',
+                  'USFMarketShareStatic',
+                  'Cust_Tenure_mnth',
+                  'TM_Tenure_mnth',
+                  #'Churn_true',
+                  'Investment.Spend.CS.participation',
+                  #'Investment.PerCS',
+                  #'CBA_share',
+                  #'DonD._Share',
+                  #'Fixed_sell_share',
+                  'Price_approval_share',
+                  #'tgp_cs_ind_nonmda',
+                  #'ind_share',
+                  #'sell_prc_ind_nonmda',
+                  #'tgp_per_drop',
+                  'sales_per_drop',
+                  'ave_customer_size',
+                  'ind_nonmda_share',
+                  'ind_nonmda_eb_share',
+                  'ind_nonmda_packer_share',
+                  'poultry_share',
+                  # 'pork_share',
+                  # 'seafood_share',
+                  # 'beef_share',
+                  # 'canned_share',
+                  # 'groceryfrozen_share',
+                  # 'chemical_share',
+                  # 'dairy_share',
+                  # 'oil_share',
+                  # 'processedmeat_share',
+                  # 'disposable_share',
+                  # 'beverage_share',
+                  # 'apperizer_share',
+                  # 'cheese_share',
+                  # 'produce_share',
+                  # 'american_share',
+                  # 'classic_share',
+                  # 'italian_share',
+                  # 'mexican_share',
+                  # 'bar_share',
+                  # 'deli_share',
+                  # 'steak_share',
+                  # 'otherasian_share',
+                  #'cop_share',
+                  'typeA_share',
+                  'prime_share',
+                  #'new_share',
+                  #'account_per_tm',
+                  #'sales_per_tm',
+                  'LIC_per_CS',
+                  #'TMC_per_CS',
+                  'trend'
+)
+dim(dt_selected)
+f <- as.formula(paste('log(tgp_cs_ind_nonmda)~', paste(covar_select, collapse='+')))
+model.Base=lm(f,data = dt_selected[-c(39:41,709),])
+#summary(model.Base)
+step.model=step(model.Base,trace = 0, direction = "both")
+summary(step.model)
 
-library(car)
-vifs_data=car::vif(mods)
-confint(mods)
+moddd=update(step.model,.~.  - poultry_share + cop_share + typeA_share -Churn_true + Quarter_number + new_share +ind_share )
+summary(moddd)
+exp(confint(moddd))-1
+car::vif(moddd)
+par(mfrow=c(2,2))
+plot(moddd)
 
+#summary(lm(log(tgp_cs_ind_nonmda)~factor(Quarter_number), data = dt_selected[-c(39:41,709),]))
+
+# table(factor(dt_selected$Quarter_number),dt_selected$Quarter_number)
+# mean(subset(dt_selected$tgp_cs_ind_nonmda,dt_selected$Quarter_number==1))
+# mean(subset(dt_selected$tgp_cs_ind_nonmda,dt_selected$Quarter_number==2))
+# mean(subset(dt_selected$tgp_cs_ind_nonmda,dt_selected$Quarter_number==3))
+# mean(subset(dt_selected$tgp_cs_ind_nonmda,dt_selected$Quarter_number==4))
+# exp(1.572e+00)
+# exp(1.572e+00)*exp(.1032614)
+# exp(1.572e+00)*exp(8.152e-02)
+# exp(1.572e+00)*exp(7.346e-02)
+#lev = hat(model.matrix(moddd))
+# res=moddd$residuals
+# which.max(res)
+# which(lev>0.03)
+step.model2=step(moddd,trace = 0, direction = "both")
+
+summary(step.model2)
+plot(step.model2)
+car::vif(step.model2)
+par(mfrow=c(2,2))
+plot(step.model2)
+dev.off()
+
+
+#LIC has slightly high vif ~12
+drop1(step.model2,test = 'Chisq')
+varss=variable.names(step.model2)[-c(1,19:22)]
+varss=c(varss,"Quarter_number","tgp_cs_ind_nonmda")
+coef(step.model2)
+confint()
+#saveRDS(step.model2,"model1_fulldata.rda")
+
+
+dev.off()
+########################################
+########################################
+########################################
+#lasso and ridge
+########################################
+########################################
+########################################
+
+library(glmnet)
+
+X<-model.matrix(log(tgp_cs_ind_nonmda)~., data=dt_selected[-c(39:41,709),varss])[,-1]
+y=log(dt_selected$tgp_cs_ind_nonmda[-c(39:41,709)])
+
+
+#glmnet by default standardize the variables
+#model fit on the training set
+
+
+#lasso :no variable reduction
+set.seed(60134)
+lasso.mod.train<-glmnet(X,y, alpha=1)
+cv.lasso.mod.train<-cv.glmnet(X,y, alpha=1, nfold=10)
+plot(cv.lasso.mod.train)
+names(cv.lasso.mod.train)
+cv.lasso.mod.train$lambda.min
+#prediction.glmnet=predict(cv.lasso.mod.train,s=0.0001411853,as.matrix(traingSet[-1]),type="response")
+#hist(prediction.glmnet)
+set.seed(60134)
+lasso.mod.train$beta
+max(lasso.mod.train$dev.ratio) #this is similar to R squared
+
+coef(lasso.mod.train,s=0.0001411853) #coef for lasso at optimum
+
+#ridge
+set.seed(60134)
+ridge.mod<-glmnet(X,y, alpha=0)
+cv.ridge.mod<-cv.glmnet(X,y, alpha=0, nfold=10)
+cv.ridge.mod$lambda.min
+set.seed(60134)
+
+max(ridge.mod$dev.ratio) #this is similar to R squared
+
+coef(ridge.mod,s=0.007192172) #coef for lasso at optimum
+
+lasso.model<-glmnet(X,y,lambda =0.0001411853,  alpha=1)
+ridge.model<-glmnet(X,y,lambda =0.007192172,  alpha=0)
+saveRDS(lasso.model,"lasso.rds")
+saveRDS(ridge.model,"ridge.rds")
 ########################################
 ########################################
 ########################################
@@ -318,28 +496,6 @@ return(rsqs)
 calculated_rsq(dt_selected,mods)
 
 
-#now let's try ridge and lasso
-dim(dt_selected)
-set.seed(60134)
-mod2=lm(log(tgp_cs_ind_nonmda)~.-divPEriod, data = dt_selected[sample(1:2112,1500),])
-summary(mod2)
-mods2=step(mod2,direction = "both")
-summary(mods2)
-library(car)
-vifs_data2=car::vif(mods2)
-confint(mods)
-par(mfrow=c(2,2))
-plot(mods2)
-par(mfrow=c(2,2))
-plot(mods2)
-
-
-dt_selected[786,]
-
-names(dt_selected)
-dim(dt_selected)
-corrplot::corrplot.mixed(corr = cor(dt_selected[,c(45,2:16)]),number.cex=0.65,tl.cex = .5)
-corrplot::corrplot.mixed(corr = cor(dt_selected[,58:80]),number.cex=0.65,tl.cex = .5)
 ########################################
 ########################################
 ########################################
@@ -525,3 +681,77 @@ dt1$Investment.Spend.CS.participation[949]=0.0001
 ########################################
 ########################################
 ########################################
+
+
+#cor(dt_selected$priceIndex,dt_selected$LIC_per_CS)
+a=(lm(log(tgp_cs_ind_nonmda)~
+                priceIndex+
+                
+                LIC_per_CS+
+                nps+
+                trend+
+                Investment.Spend.CS.participation+
+                Churn_true+
+                ave_customer_size+
+                USFMarketShareStatic+
+                sales_per_drop
+      ,data = dt_selected))
+
+b=(lm(log(tgp_cs_ind_nonmda)~
+                priceIndex+
+                LIC_per_CS+
+                nps+
+                poly(trend,5)+
+                
+                Investment.Spend.CS.participation+
+                #POI+
+                ave_customer_size+
+                USFMarketShareStatic+
+                #sales_per_drop+
+                poultry_share+
+                EcomPenetration
+      #Cust_Tenure_mnth
+      ,data = train2))
+
+
+summary(b)
+plot(b)
+plot(predict(b,test2),log(test2$tgp_cs_ind_nonmda))^2
+names(dt_selected)
+
+#this is very much overfitted with many correlated variables
+mod=lm(log(tgp_cs_ind_nonmda)~.
+       -divPEriod
+       -FISC_YR_MTH
+       -FISC_YR, data = train2)
+summary(mod)
+mods=step(mod,direction = "both")
+summary(mods)
+yhat=predict(mods,newdata = test2)
+
+cor(log(test2$tgp_cs_ind_nonmda),yhat)^2
+
+
+
+#now let's try ridge and lasso
+dim(dt_selected)
+set.seed(60134)
+mod2=lm(log(tgp_cs_ind_nonmda)~.-divPEriod, data = dt_selected[sample(1:2112,1500),])
+summary(mod2)
+mods2=step(mod2,direction = "both")
+summary(mods2)
+library(car)
+vifs_data2=car::vif(mods2)
+confint(mods)
+par(mfrow=c(2,2))
+plot(mods2)
+par(mfrow=c(2,2))
+plot(mods2)
+
+
+dt_selected[786,]
+
+names(dt_selected)
+dim(dt_selected)
+corrplot::corrplot.mixed(corr = cor(dt_selected[,c(45,2:16)]),number.cex=0.65,tl.cex = .5)
+corrplot::corrplot.mixed(corr = cor(dt_selected[,58:80]),number.cex=0.65,tl.cex = .5)
