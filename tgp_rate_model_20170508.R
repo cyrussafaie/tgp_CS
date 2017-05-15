@@ -471,15 +471,28 @@ ridge.mod<-glmnet(X,y, alpha=0)
 cv.ridge.mod<-cv.glmnet(X,y, alpha=0, nfold=10)
 cv.ridge.mod$lambda.min
 set.seed(60134)
-
 max(ridge.mod$dev.ratio) #this is similar to R squared
-
 coef(ridge.mod,s=0.007192172) #coef for lasso at optimum
+
+#elastic net
+set.seed(60134)
+elastinet.mod<-glmnet(X,y, alpha=0.5)
+cv.elastinet.mod<-cv.glmnet(X,y, alpha=0.5, nfold=10)
+cv.elastinet.mod$lambda.min
+set.seed(60134)
+max(elastinet.mod$dev.ratio) #this is similar to R squared
+coef(elastinet.mod,s=0.0001222315) #coef for lasso at optimum
+
+
+
+
 
 lasso.model<-glmnet(X,y,lambda =0.0001411853,  alpha=1)
 ridge.model<-glmnet(X,y,lambda =0.007192172,  alpha=0)
+elasticnet.model<-glmnet(X,y, lambda = 0.0001222315, alpha=0.5)
 saveRDS(lasso.model,"lasso.rds")
 saveRDS(ridge.model,"ridge.rds")
+saveRDS(elasticnet.model,"e_net.rds")
 ########################################
 ########################################
 ########################################
