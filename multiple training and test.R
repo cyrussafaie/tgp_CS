@@ -178,7 +178,7 @@ diff <- coef.mean-coef
 rbind(full.sample = coef, simulated.mean = coef.mean, diff = diff, pcent.diff =
                 round(diff/coef,2))
 
-## Scale CI down
+## Scale CI down- need to fix this piece
 x <- 1
 ## Extract CI from sampling result
 beta.ci <- t(sapply(result,"[[","conf.int"))*x
