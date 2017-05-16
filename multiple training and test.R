@@ -1,13 +1,15 @@
 ### Create sample data:
-set.seed(11221)
-df=dt_selected[,-1]
+set.seed(60134)
+df=dt_selected[,varss]
 df$log_y=log(df$tgp_cs_ind_nonmda)
+names(df)
+df=df[,-21]
 dim(df)[1]
 index <- sample(seq_len(nrow(df)), size = round(dim(df)[1]*0.8,0))
 train <- df[index, ]
 ### Intialize loop
-y <- "log_y"
-available.x <- colnames(train)[-43]
+yy <- "log_y"
+available.x <- colnames(train)[-21]
 chosen.x <- NULL
 r2 <- NULL
 ### Reset the best r^2 for each run
@@ -16,7 +18,7 @@ while (length(available.x) > 0) {
           ### Iterate model based on previous best r^2 
           for (this.x in available.x) {
                     rhs <- paste(c(chosen.x, this.x), collapse=" + ")
-                    f <- as.formula(paste(y, rhs, sep=" ~ "))
+                    f <- as.formula(paste(yy, rhs, sep=" ~ "))
                     this.r2 <- summary(lm(f, data=train))$r.square
                     ### Compare r^2 for this iteration
                     if (this.r2 > best.r2) {
@@ -45,14 +47,14 @@ plot(r2, type="l");points(r2)
 ## Set initial parameters
 result <- NULL
 df <- cbind(log_y = df$log_y,
-            df[,names(df)%in%chosen.x[-c(1,84)]])
-head(df)
+            df[,names(df)%in%chosen.x[-c(1)]])
+dim(df)
 
-x <- paste(chosen.x[-c(1,84)], collapse = " + ")
-f <- as.formula(paste(y,x, sep = " ~ "))
+x <- paste(chosen.x[-c(1)], collapse = " + ")
+f <- as.formula(paste(yy,x, sep = " ~ "))
 n <- floor(0.8* nrow(df))
 ## Iterate 1,000 times
-for (i in 1:1000) {
+for (i in 1000) {
           ## Create train & test
           set.seed(i)
           index <- sample(seq_len(nrow(df)), size = n)
@@ -65,13 +67,16 @@ for (i in 1:1000) {
           r.train <- summary$r.squared
           conf.int <- t(confint(model))
           ## Calculate r^2 in holdout
-          predicted <- predict(model, newdata=test)
-          r.test <- cor(test$log_y,predicted)^2
+          predicted <- predict(model, newdata=test, interval="predict")
+          conf.int.test=predicted[,2:3]
+          fit=predicted[,1]
+          r.test <- cor(test$log_y,fit)^2
           ## Combine all values and save them
           result[[paste0("model.",i)]] <- list(model=model,
                                                summary=summary,
                                                coef=coef,
-                                               conf.int=conf.int,
+                                               conf.int.train=conf.int,
+                                               #conf.int.test=conf.int.test,
                                                r.train = r.train,
                                                r.test = r.test)
 }
@@ -80,6 +85,7 @@ for (i in 1:1000) {
 
 ## Extract coef and caluclate mean and sd
 result.coef <- t(sapply(result,"[[","coef"))
+head(result.coef)
 coef.mean <- apply(result.coef,2,mean)
 coef.sd <- apply(result.coef,2,sd)
 ## Prepare plot
@@ -100,8 +106,8 @@ for (i in 1:9) {
           ## Show mean
           abline(v=mean, col = "darkgreen", lwd = 2)
           ## Show sd
-          arrows(mean-sd, mean(d$y),
-                 mean+sd, mean(d$y),
+          arrows(mean-sd, mean(d$yy),
+                 mean+sd, mean(d$yy),
                  code=3, length=.05, angle = 90, col = "royalblue", lwd = 2)
 }
 
@@ -109,8 +115,8 @@ dev.off()
 
 ## Extract r^2 for model and caluclate mean and sd
 result.r.train <- sapply(result,"[[","r.train")
-r.train.mean <- round(mean(result.r.train),2)
-r.train.sd <- round(sd(result.r.train),2)
+r.train.mean <- mean(result.r.train)
+r.train.sd <- sd(result.r.train)
 d <- density(result.r.train)
 ## Prepare plot
 ### Define chart labels
@@ -122,15 +128,15 @@ lines(d, col = "red",lwd = 2)
 ### Show mean
 abline(v=r.train.mean, col = "darkgreen", lwd = 2)
 ### Show sd
-arrows(r.train.mean-r.train.sd, mean(d$y),
-       r.train.mean+r.train.sd, mean(d$y),
+arrows(r.train.mean-r.train.sd, mean(d$yy),
+       r.train.mean+r.train.sd, mean(d$yy),
        code=3, length=.05, angle = 90, col = "royalblue", lwd = 2)
 
 
 # Extract r^2 for holdout and caluclate mean and sd
 result.r.test <- sapply(result,"[[","r.test")
-r.test.mean <- round(mean(result.r.test),2)
-r.test.sd <- round(sd(result.r.test),2)
+r.test.mean <- mean(result.r.test)
+r.test.sd <- sd(result.r.test)
 d <- density(result.r.test)
 ## Prepare plot
 ### Define chart labels
@@ -142,8 +148,8 @@ lines(d, col = "red",lwd = 2)
 ### Show mean
 abline(v=r.test.mean, col = "darkgreen", lwd = 2)
 ### Show sd
-arrows(r.test.mean-r.test.sd, mean(d$y),
-       r.test.mean+r.test.sd, mean(d$y),
+arrows(r.test.mean-r.test.sd, mean(d$yy),
+       r.test.mean+r.test.sd, mean(d$yy),
        code=3, length=.05, angle = 90, col = "royalblue", lwd = 2)
 
 
@@ -151,8 +157,8 @@ arrows(r.test.mean-r.test.sd, mean(d$y),
 ## Collect change r^2 from training to test and calcualte mean and sd
 change <-
           abs(result.r.test-result.r.train)/result.r.train
-cange.mean <- round(mean(change),2)
-chang.sd <- round(sd(change),2)
+cange.mean <- mean(change)
+chang.sd <- sd(change)
 d <- density(change)
 ## Prepare plot
 ### Define chart labels
@@ -164,8 +170,8 @@ lines(d, col = "red",lwd = 2)
 ### Show mean
 abline(v=cange.mean, col = "darkgreen", lwd = 2)
 ### Show sd
-arrows(cange.mean-chang.sd, mean(d$y),
-       cange.mean+chang.sd, mean(d$y),
+arrows(cange.mean-chang.sd, mean(d$yy),
+       cange.mean+chang.sd, mean(d$yy),
        code=3, length=.05, angle = 90, col = "royalblue", lwd = 2)
 
 
@@ -173,10 +179,10 @@ arrows(cange.mean-chang.sd, mean(d$y),
 
 model <- lm(f, df)
 summary <- summary(model)
-coef <- round(summary$coef[,1],2)
+coef <- summary$coef[,1]
 diff <- coef.mean-coef
 rbind(full.sample = coef, simulated.mean = coef.mean, diff = diff, pcent.diff =
-                round(diff/coef,2))
+                diff/coef)
 
 ## Scale CI down- need to fix this piece
 x <- 1
@@ -185,16 +191,17 @@ beta.ci <- t(sapply(result,"[[","conf.int"))*x
 ## Calculate interval length
 beta.ci.length <- matrix(nrow = 1000, ncol=4)
 for (i in c(2,4,6,8)) {
-          beta.ci.length[,i-i/2] <- round(beta.ci[,i]-beta.ci[,i-1],2)
+          beta.ci.length[,i-i/2] <- beta.ci[,i]-beta.ci[,i-1]
 }
 ## Extract CI from full sample result
 conf.int <- confint(model)
-conf.int.length <-round(conf.int[,2]-conf.int[,1],2)
+conf.int.length <-conf.int[,2]-conf.int[,1]
 ## Compare CIs
-train.ci.mean <- round(apply(beta.ci.length,2,mean),2)
+train.ci.mean <- apply(beta.ci.length,2,mean)
 full.ci <- conf.int.length
 diff <- train.ci.mean - full.ci
-pcent.diff = round(diff/full.ci,2)
+pcent.diff = diff/full.ci
 rbind(full.ci, train.ci.mean, diff, pcent.diff)
 
-
+cbind(summary(step.model2)$coef[,1],confint(step.model2))
+?summary

@@ -427,7 +427,7 @@ drop1(step.model2,test = 'Chisq')
 varss=variable.names(step.model2)[-c(1,19:22)]
 varss=c(varss,"Quarter_number","tgp_cs_ind_nonmda")
 coef(step.model2)
-confint()
+confint(step.model2)
 #saveRDS(step.model2,"model1_fulldata.rda")
 
 
@@ -485,14 +485,13 @@ coef(elastinet.mod,s=0.0001222315) #coef for lasso at optimum
 
 
 
-
-
 lasso.model<-glmnet(X,y,lambda =0.0001411853,  alpha=1)
 ridge.model<-glmnet(X,y,lambda =0.007192172,  alpha=0)
 elasticnet.model<-glmnet(X,y, lambda = 0.0001222315, alpha=0.5)
-saveRDS(lasso.model,"lasso.rds")
-saveRDS(ridge.model,"ridge.rds")
-saveRDS(elasticnet.model,"e_net.rds")
+# saveRDS(lasso.model,"lasso.rds")
+# saveRDS(ridge.model,"ridge.rds")
+# saveRDS(elasticnet.model,"e_net.rds")
+# 
 ########################################
 ########################################
 ########################################
