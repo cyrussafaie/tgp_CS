@@ -424,7 +424,7 @@ dev.off()
 
 #LIC has slightly high vif ~12
 drop1(step.model2,test = 'Chisq')
-varss=variable.names(step.model2)[-c(1,19:22)]
+varss=variable.names(step.model2)[-c(1,20:22)]
 varss=c(varss,"Quarter_number","tgp_cs_ind_nonmda")
 coef(step.model2)
 confint(step.model2)
@@ -463,7 +463,7 @@ set.seed(60134)
 lasso.mod.train$beta
 max(lasso.mod.train$dev.ratio) #this is similar to R squared
 
-coef(lasso.mod.train,s=0.0001411853) #coef for lasso at optimum
+coef(lasso.mod.train,s=0.0001286428) #coef for lasso at optimum
 
 #ridge
 set.seed(60134)
@@ -481,16 +481,16 @@ cv.elastinet.mod<-cv.glmnet(X,y, alpha=0.5, nfold=10)
 cv.elastinet.mod$lambda.min
 set.seed(60134)
 max(elastinet.mod$dev.ratio) #this is similar to R squared
-coef(elastinet.mod,s=0.0001222315) #coef for lasso at optimum
+coef(elastinet.mod,s=0.0001341489) #coef for lasso at optimum
 
 
 
-lasso.model<-glmnet(X,y,lambda =0.0001411853,  alpha=1)
+lasso.model<-glmnet(X,y,lambda =0.0001286428,  alpha=1)
 ridge.model<-glmnet(X,y,lambda =0.007192172,  alpha=0)
-elasticnet.model<-glmnet(X,y, lambda = 0.0001222315, alpha=0.5)
-# saveRDS(lasso.model,"lasso.rds")
-# saveRDS(ridge.model,"ridge.rds")
-# saveRDS(elasticnet.model,"e_net.rds")
+elasticnet.model<-glmnet(X,y, lambda = 0.0001341489, alpha=0.5)
+ # saveRDS(lasso.model,"lasso.rds")
+ # saveRDS(ridge.model,"ridge.rds")
+ # saveRDS(elasticnet.model,"e_net.rds")
 # 
 
 ########################################
@@ -506,13 +506,13 @@ set.seed(60134)
 df=dt_selected[,varss]
 df$log_y=log(df$tgp_cs_ind_nonmda)
 names(df)
-df=df[,-21]
+df=df[,-22]
 dim(df)[1]
 index <- sample(seq_len(nrow(df)), size = round(dim(df)[1]*0.8,0))
 train <- df[index, ]
 ### Intialize loop
 yy <- "log_y"
-available.x <- colnames(train)[-21]
+available.x <- colnames(train)[-22]
 chosen.x <- NULL
 r2 <- NULL
 ### Reset the best r^2 for each run
@@ -591,42 +591,98 @@ percentile95Percbeta=t(apply(result.coef,2,function(x){quantile(x,c(0.025,0.975)
 coef.mean <- apply(result.coef,2,mean)
 coef.sd <- apply(result.coef,2,sd)
 output_MUTATE=cbind(coef.mean,percentile95Percbeta,coef.sd)
+colnames(output_MUTATE)=c('coef_MuTaTe','MuTaTe2.5','MuTaTe97.5','coef_SD_MuTaTe')
 
 
 
+########################################
+########################################
+########################################
+# bootsrap
+########################################
+########################################
+########################################
+library(relaimpo)
+
+#relative importance of input variables
+relImportance <- calc.relimp(step.model2, type = "lmg", rela = TRUE)  # calculate relative importance scaled to 100
+sort(relImportance$lmg, decreasing=TRUE)  # relative importance
+ave.coefs=apply(relImportance$ave.coeffs, 1, mean)
+dim(as.matrix(ave.coefs))
+# boot <- boot.relimp(step.model2, b = 1000, type = c("lmg"), rank = TRUE, 
+#                     diff = TRUE, rela = TRUE)
+# booteval.relimp(boot) # print result
+#
 
 
+# Bootstrap 95% CI for regression coefficients 
+# library(boot)
+# # function to obtain regression weights 
+# bs <- function(formula, data, indices) {
+#           d <- data[indices,] # allows boot to select sample 
+#           fit <- lm(formula, data=d)
+#           return(coef(fit)) 
+# } 
+# # bootstrapping with 1000 replications 
+# library(car)
+# sa=Boot(model2,f=coef,5000,labels=names(coef(model2)))
+# summary(sa)
+# summary(sa, high.moments=TRUE)
+# hist(sa, layout=c(1, 3))
+# confint(sa)
+
+########################################
+########################################
+########################################
+# combining outputs
+########################################
+########################################
+########################################
 
 
+cc=cbind(coef_step=coef(step.model2),
+      confint(step.model2))
 
 
+a=coef(lasso.mod.train,s=0.0001286428)#coef for lasso at optimum
+aa=matrix(a)
+row.names(aa)=row.names(a)  
+colnames(aa)='coef_lasso'
+
+                 
+b=coef(ridge.mod,s=0.007192172) #coef for ridge at optimum
+bb=matrix(b)
+row.names(bb)=row.names(b)  
+colnames(bb)='coef_ridge'
 
 
+d=coef(elastinet.mod,s=0.0001341489) #coef for elasticnet at optimum
+dd=matrix(d)
+row.names(dd)=row.names(d)  
+colnames(dd)='coef_eNet'
 
+f=merge(cc,aa,by="row.names",all.x=TRUE)
+row.names(f)=f$Row.names
+f=f[,-1]
+f=merge(f,bb,by="row.names",all.x=TRUE)
+row.names(f)=f$Row.names
+f=f[,-1]
+f=merge(f,dd,by="row.names",all.x=TRUE)
+row.names(f)=f$Row.names
+f=f[,-1]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+boosts1=as.matrix(ave.coefs)
+colnames(boosts1)='bootstrap1'
+#boots
+f=merge(f,boosts1,by="row.names",all.x=TRUE)
+row.names(f)=f$Row.names
+f=f[,-1]
+#mutate
+f=merge(f,output_MUTATE,by="row.names",all.x=TRUE)
+row.names(f)=f$Row.names
+f=f[,-1]
+saveRDS(f,'results_coefs_rds')
+readRDS('results_coefs_rds')
 ########################################
 ########################################
 ########################################

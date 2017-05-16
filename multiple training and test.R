@@ -54,7 +54,7 @@ x <- paste(chosen.x[-c(1)], collapse = " + ")
 f <- as.formula(paste(yy,x, sep = " ~ "))
 n <- floor(0.8* nrow(df))
 ## Iterate 1,000 times
-for (i in 1000) {
+for (i in 1:1000) {
           ## Create train & test
           set.seed(i)
           index <- sample(seq_len(nrow(df)), size = n)
@@ -82,12 +82,18 @@ for (i in 1000) {
 }
 
 
-
 ## Extract coef and caluclate mean and sd
 result.coef <- t(sapply(result,"[[","coef"))
-head(result.coef)
+percentile95Percbeta=t(apply(result.coef,2,function(x){quantile(x,c(0.025,0.975))}))
 coef.mean <- apply(result.coef,2,mean)
 coef.sd <- apply(result.coef,2,sd)
+cbind(coef.mean,percentile95Percbeta,coef.sd)
+
+
+
+
+
+
 ## Prepare plot
 par(mfrow=c(3,3))
 for (i in 1:9) {
