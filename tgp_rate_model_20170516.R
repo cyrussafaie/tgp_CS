@@ -3,7 +3,8 @@ dim(dt)
 names(dt)
 str(dt,list.len = 999)
 library(ggplot2)
-
+dt$SALES_IND_NONMDA
+dt$CUSTOMER_CNT_IND_NONMDA
 
 #exclude salad and specialty meat
 # exclude potentially customer type B and C
@@ -606,7 +607,7 @@ library(relaimpo)
 
 #relative importance of input variables
 relImportance <- calc.relimp(step.model2, type = "lmg", rela = TRUE)  # calculate relative importance scaled to 100
-sort(relImportance$lmg, decreasing=TRUE)  # relative importance
+as.matrix(round(100*sort(relImportance$lmg, decreasing=TRUE)),0)  # relative importance
 ave.coefs=apply(relImportance$ave.coeffs, 1, mean)
 dim(as.matrix(ave.coefs))
 # boot <- boot.relimp(step.model2, b = 1000, type = c("lmg"), rank = TRUE, 
@@ -718,13 +719,50 @@ saveRDS(fff,'results_coefs_20170516_2200.rds')
 write.csv(fff,'results_coefs_20170516_2200.csv', row.names = F)
 
 
-final_Datas2=cbind(fff[,1],exp(fff[,-1])-1)
-saveRDS(final_Datas2,'transformed_results_coefs_20170516_2245.rds')
-write.csv(final_Datas2,'transformed_results_coefs_20170516_2245.csv', row.names = F)
+#not meaningful for all variables
+# final_Datas2=cbind(fff[,1],exp(fff[,-1])-1)
+# saveRDS(final_Datas2,'transformed_results_coefs_20170516_2245.rds')
+# write.csv(final_Datas2,'transformed_results_coefs_20170516_2245.csv', row.names = F)
+
+
+
+summary(dt_selected[,varss])
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########################################
+########################################
+########################################
+# Appendix
+########################################
+########################################
+########################################
 
 
 
