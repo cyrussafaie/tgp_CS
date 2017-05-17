@@ -621,25 +621,40 @@ class(step.model2)
 sa=Boot(step.model2,R=5000,labels=names(coef(step.model2)))
 
 summary(sa, high.moments=TRUE)
-conf_sa=confint(sa)
+
+formula(step.model2)
+
+library(boot)
+# function to obtain regression weights 
+bs <- function(formula, data, indices) {
+          d <- data[indices,] # allows boot to select sample 
+          fit <- lm(formula, data=d)
+          return(coef(fit)) 
+} 
+# bootstrapping with 1000 replications 
+resultss <- boot(data=dt_selected[-c(39:41,709),], statistic=bs, 
+                R=5000, formula=formula(step.model2))
+summary(resultss)
+dims=names(coef(step.model2))
+rownames(results)=dims
+t(apply(resultss$t,2,mean))
 
 
+# get 95% confidence intervals 
+yek=boot.ci(resultss, type="bca",index = 1) # intercept 
+dos=boot.ci(resultss, type="bca", index=24) # wt 
+boot.ci(results, type="bca", index=3) # disp
 
-# Bootstrap 95% CI for regression coefficients 
-# library(boot)
-# # function to obtain regression weights 
-# bs <- function(formula, data, indices) {
-#           d <- data[indices,] # allows boot to select sample 
-#           fit <- lm(formula, data=d)
-#           return(coef(fit)) 
-# } 
-# # bootstrapping with 1000 replications 
-# library(car)
-# sa=Boot(model2,f=coef,5000,labels=names(coef(model2)))
-# summary(sa)
-# summary(sa, high.moments=TRUE)
-# hist(sa, layout=c(1, 3))
-# confint(sa)
+grouped_CI=matrix(NA,nrow = 24, ncol=2)
+colnames(grouped_CI)=c('boots2_CI_low','boots2_CI_high')
+rownames(grouped_CI)=dims
+for (i in 1:24) {
+grouped_CI[i,]=rbind(boot.ci(resultss, type="bca",index = i)$bca[4:5])  
+
+}
+
+
+donee=cbind(bootMed=summary(resultss)[,5],grouped_CI)
 
 ########################################
 ########################################
@@ -691,14 +706,16 @@ f=f[,-1]
 f=merge(f,output_MUTATE,by="row.names",all.x=TRUE)
 row.names(f)=f$Row.names
 f=f[,-1]
-saveRDS(f,'results_coefs.rds')
 
+
+saveRDS(f,'results_coefs.rds')
 write.csv(f,'results_coefs_20170516_1851.csv', row.names = F)
 
 
+fff=merge(f,donee,by="row.names",all.x=TRUE)
 
-
-
+saveRDS(fff,'results_coefs_20170516_2200.rds')
+write.csv(fff,'results_coefs_20170516_2200.csv', row.names = F)
 
 
 
