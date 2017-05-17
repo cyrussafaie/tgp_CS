@@ -613,6 +613,16 @@ dim(as.matrix(ave.coefs))
 #                     diff = TRUE, rela = TRUE)
 # booteval.relimp(boot) # print result
 #
+remove(f)
+# bootstrapping with 1000 replications 
+library(car)
+
+class(step.model2)
+sa=Boot(step.model2,R=5000,labels=names(coef(step.model2)))
+
+summary(sa, high.moments=TRUE)
+conf_sa=confint(sa)
+
 
 
 # Bootstrap 95% CI for regression coefficients 
@@ -681,8 +691,27 @@ f=f[,-1]
 f=merge(f,output_MUTATE,by="row.names",all.x=TRUE)
 row.names(f)=f$Row.names
 f=f[,-1]
-saveRDS(f,'results_coefs_rds')
-readRDS('results_coefs_rds')
+saveRDS(f,'results_coefs.rds')
+
+write.csv(f,'results_coefs_20170516_1851.csv', row.names = F)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ########################################
 ########################################
 ########################################
