@@ -718,6 +718,9 @@ saveRDS(fff,'results_coefs_20170516_2200.rds')
 write.csv(fff,'results_coefs_20170516_2200.csv', row.names = F)
 
 
+final_Datas2=cbind(fff[,1],exp(fff[,-1])-1)
+saveRDS(final_Datas2,'transformed_results_coefs_20170516_2245.rds')
+write.csv(final_Datas2,'transformed_results_coefs_20170516_2245.csv', row.names = F)
 
 
 
