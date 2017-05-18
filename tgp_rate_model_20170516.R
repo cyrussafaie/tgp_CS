@@ -20,7 +20,7 @@ dt$CUSTOMER_CNT_IND_NONMDA
 #fixing 52 weeks issue of the 
 
 for (i in c(14:22,27:63,88:89)){
-dt[,i]=ifelse(dt$FISC_YR_MTH=='201512',round(dt[,i]*4/5,0),dt[,i])
+          dt[,i]=ifelse(dt$FISC_YR_MTH=='201512',round(dt[,i]*4/5,0),dt[,i])
 }
 
 dt$tgp_cs_ind_nonmda=round(dt$TGP_IND_NONMDA/dt$QTY_IND_NONMDA,4)#output
@@ -67,7 +67,7 @@ dt$steak_share=100*round(dt$QTY_STEAKMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 dt$otherasian_share=100*round(dt$QTY_OTHASIANMENU_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 dt$cop=dt$QTY_POULTRY_IND_NONMDA+dt$QTY_BEEF_IND_NONMDA+dt$QTY_SEAFOOD_IND_NONMDA+dt$QTY_PORK_IND_NONMDA+dt$QTY_SPECIALTYMEAT_IND_NONMDA+dt$QTY_PROCESSEDMEAT_IND_NONMDA
 dt$cop_share=100*(dt$QTY_POULTRY_IND_NONMDA+dt$QTY_BEEF_IND_NONMDA+dt$QTY_SEAFOOD_IND_NONMDA+dt$QTY_PORK_IND_NONMDA+dt$QTY_SPECIALTYMEAT_IND_NONMDA+dt$QTY_PROCESSEDMEAT_IND_NONMDA)/dt$QTY_IND_NONMDA
-          
+
 dt$typeA_share=100*round(dt$QTY_CUSTA_IND_NONMDA/dt$QTY_IND_NONMDA,4) #type A colume share
 #dt$typeC_share=round(dt$QTY_CUSTC_IND_NONMDA/dt$QTY_IND_NONMDA,4)
 
@@ -163,7 +163,7 @@ dim(dt)
 
 #saveRDS(dt,"data_full_20170514.rds")
 #dt=readRDS("data_full_20170514.rds")
-
+dim(dt)
 #write.csv(dt,"data_all_20170514.csv",row.names = F)
 #write.csv(dt[1:2,],"var_20170514.csv")
 
@@ -298,91 +298,91 @@ train2=dt_selected[-test_random,]
 dim(dt)
 covar_select=c(
           #'divPEriod',
-                  # 'FISC_YR_MTH',
-                  # 'FISC_YR',
-                  #'Quarter_number',
-                  # 'CUSTOMER_CNT_IND_NONMDA',
-                  # 'TM_CNT_IND_NONMDA',
-                  # 'QTY_POULTRY_IND_NONMDA',
-                  # 'QTY_PORK_IND_NONMDA',
-                  # 'QTY_CANFRUITVEG_IND_NONMDA',
-                  # 'QTY_GROCERYFROZEN_IND_NONMDA',
-                  # 'QTY_CHEMICAL_IND_NONMDA',
-                  # 'QTY_DAIRY_IND_NONMDA',
-                  # 'QTY_SALAD_IND_NONMDA',
-                  # 'QTY_OIL_IND_NONMDA',
-                  # 'QTY_BEEF_IND_NONMDA',
-                  # 'QTY_SPECIALTYMEAT_IND_NONMDA',
-                  # 'QTY_PROCESSEDMEAT_IND_NONMDA',
-                  # 'QTY_DISPOSABLE_IND_NONMDA',
-                  # 'QTY_SEAFOOD_IND_NONMDA',
-                  # 'QTY_BEVERAGE_IND_NONMDA',
-                  # 'QTY_APPETIZER_IND_NONMDA',
-                  # 'QTY_CHEESE_IND_NONMDA',
-                  # 'QTY_PRODUCE_IND_NONMDA',
-                  'EcomPenetration',
-                   # 'Correct_Invoices',
-                   # 'Complete_Orders',
-                   # 'DamageFree_Orders',
-                   # 'OnTime_Orders',
-                  'POI',
-                  'YOYgrowth',
-                  'priceIndex',
-                  'nps',
-                  'Organized',
-                  #'USFRank_BCG',
-                  'CustomMarketIndexCMI',
-                  'USFMarketShareStatic',
-                  'Cust_Tenure_mnth',
-                  'TM_Tenure_mnth',
-                  #'Churn_true',
-                  'Investment.Spend.CS.participation',
-                  #'Investment.PerCS',
-                  #'CBA_share',
-                  #'DonD._Share',
-                  #'Fixed_sell_share',
-                  'Price_approval_share',
-                  #'tgp_cs_ind_nonmda',
-                  #'ind_share',
-                  #'sell_prc_ind_nonmda',
-                  #'tgp_per_drop',
-                  'sales_per_drop',
-                  'ave_customer_size',
-                  'ind_nonmda_share',
-                  'ind_nonmda_eb_share',
-                  'ind_nonmda_packer_share',
-                  'poultry_share',
-                  # 'pork_share',
-                  # 'seafood_share',
-                  # 'beef_share',
-                  # 'canned_share',
-                  # 'groceryfrozen_share',
-                  # 'chemical_share',
-                  # 'dairy_share',
-                  # 'oil_share',
-                  # 'processedmeat_share',
-                  # 'disposable_share',
-                  # 'beverage_share',
-                  # 'apperizer_share',
-                  # 'cheese_share',
-                  # 'produce_share',
-                  # 'american_share',
-                  # 'classic_share',
-                  # 'italian_share',
-                  # 'mexican_share',
-                  # 'bar_share',
-                  # 'deli_share',
-                  # 'steak_share',
-                  # 'otherasian_share',
-                  #'cop_share',
-                  'typeA_share',
-                  'prime_share',
-                  #'new_share',
-                  #'account_per_tm',
-                  #'sales_per_tm',
-                  'LIC_per_CS',
-                  #'TMC_per_CS',
-                  'trend'
+          # 'FISC_YR_MTH',
+          # 'FISC_YR',
+          #'Quarter_number',
+          # 'CUSTOMER_CNT_IND_NONMDA',
+          # 'TM_CNT_IND_NONMDA',
+          # 'QTY_POULTRY_IND_NONMDA',
+          # 'QTY_PORK_IND_NONMDA',
+          # 'QTY_CANFRUITVEG_IND_NONMDA',
+          # 'QTY_GROCERYFROZEN_IND_NONMDA',
+          # 'QTY_CHEMICAL_IND_NONMDA',
+          # 'QTY_DAIRY_IND_NONMDA',
+          # 'QTY_SALAD_IND_NONMDA',
+          # 'QTY_OIL_IND_NONMDA',
+          # 'QTY_BEEF_IND_NONMDA',
+          # 'QTY_SPECIALTYMEAT_IND_NONMDA',
+          # 'QTY_PROCESSEDMEAT_IND_NONMDA',
+          # 'QTY_DISPOSABLE_IND_NONMDA',
+          # 'QTY_SEAFOOD_IND_NONMDA',
+          # 'QTY_BEVERAGE_IND_NONMDA',
+          # 'QTY_APPETIZER_IND_NONMDA',
+          # 'QTY_CHEESE_IND_NONMDA',
+          # 'QTY_PRODUCE_IND_NONMDA',
+          'EcomPenetration',
+          # 'Correct_Invoices',
+          # 'Complete_Orders',
+          # 'DamageFree_Orders',
+          # 'OnTime_Orders',
+          'POI',
+          'YOYgrowth',
+          'priceIndex',
+          'nps',
+          'Organized',
+          #'USFRank_BCG',
+          'CustomMarketIndexCMI',
+          'USFMarketShareStatic',
+          'Cust_Tenure_mnth',
+          'TM_Tenure_mnth',
+          #'Churn_true',
+          'Investment.Spend.CS.participation',
+          #'Investment.PerCS',
+          #'CBA_share',
+          #'DonD._Share',
+          #'Fixed_sell_share',
+          'Price_approval_share',
+          #'tgp_cs_ind_nonmda',
+          #'ind_share',
+          #'sell_prc_ind_nonmda',
+          #'tgp_per_drop',
+          'sales_per_drop',
+          'ave_customer_size',
+          'ind_nonmda_share',
+          'ind_nonmda_eb_share',
+          'ind_nonmda_packer_share',
+          'poultry_share',
+          # 'pork_share',
+          # 'seafood_share',
+          # 'beef_share',
+          # 'canned_share',
+          # 'groceryfrozen_share',
+          # 'chemical_share',
+          # 'dairy_share',
+          # 'oil_share',
+          # 'processedmeat_share',
+          # 'disposable_share',
+          # 'beverage_share',
+          # 'apperizer_share',
+          # 'cheese_share',
+          # 'produce_share',
+          # 'american_share',
+          # 'classic_share',
+          # 'italian_share',
+          # 'mexican_share',
+          # 'bar_share',
+          # 'deli_share',
+          # 'steak_share',
+          # 'otherasian_share',
+          #'cop_share',
+          'typeA_share',
+          'prime_share',
+          #'new_share',
+          #'account_per_tm',
+          #'sales_per_tm',
+          'LIC_per_CS',
+          #'TMC_per_CS',
+          'trend'
 )
 dim(dt_selected)
 f <- as.formula(paste('log(tgp_cs_ind_nonmda)~', paste(covar_select, collapse='+')))
@@ -391,7 +391,7 @@ model.Base=lm(f,data = dt_selected[-c(39:41,709),])
 step.model=step(model.Base,trace = 0, direction = "both")
 summary(step.model)
 
-moddd=update(step.model,.~.  - poultry_share + cop_share + typeA_share -Churn_true + Quarter_number + new_share +ind_share )
+moddd=update(step.model,.~.  -poultry_share + cop_share + typeA_share -Churn_true + Quarter_number + new_share +ind_share )
 summary(moddd)
 exp(confint(moddd))-1
 car::vif(moddd)
@@ -489,9 +489,9 @@ coef(elastinet.mod,s=0.0001341489) #coef for lasso at optimum
 lasso.model<-glmnet(X,y,lambda =0.0001286428,  alpha=1)
 ridge.model<-glmnet(X,y,lambda =0.007192172,  alpha=0)
 elasticnet.model<-glmnet(X,y, lambda = 0.0001341489, alpha=0.5)
- # saveRDS(lasso.model,"lasso.rds")
- # saveRDS(ridge.model,"ridge.rds")
- # saveRDS(elasticnet.model,"e_net.rds")
+# saveRDS(lasso.model,"lasso.rds")
+# saveRDS(ridge.model,"ridge.rds")
+# saveRDS(elasticnet.model,"e_net.rds")
 # 
 
 ########################################
@@ -634,7 +634,7 @@ bs <- function(formula, data, indices) {
 } 
 # bootstrapping with 1000 replications 
 resultss <- boot(data=dt_selected[-c(39:41,709),], statistic=bs, 
-                R=5000, formula=formula(step.model2))
+                 R=5000, formula=formula(step.model2))
 summary(resultss)
 dims=names(coef(step.model2))
 rownames(results)=dims
@@ -650,8 +650,8 @@ grouped_CI=matrix(NA,nrow = 24, ncol=2)
 colnames(grouped_CI)=c('boots2_CI_low','boots2_CI_high')
 rownames(grouped_CI)=dims
 for (i in 1:24) {
-grouped_CI[i,]=rbind(boot.ci(resultss, type="bca",index = i)$bca[4:5])  
-
+          grouped_CI[i,]=rbind(boot.ci(resultss, type="bca",index = i)$bca[4:5])  
+          
 }
 
 
@@ -667,7 +667,7 @@ donee=cbind(bootMed=summary(resultss)[,5],grouped_CI)
 
 
 cc=cbind(coef_step=coef(step.model2),
-      confint(step.model2))
+         confint(step.model2))
 
 
 a=coef(lasso.mod.train,s=0.0001286428)#coef for lasso at optimum
@@ -675,7 +675,7 @@ aa=matrix(a)
 row.names(aa)=row.names(a)  
 colnames(aa)='coef_lasso'
 
-                 
+
 b=coef(ridge.mod,s=0.007192172) #coef for ridge at optimum
 bb=matrix(b)
 row.names(bb)=row.names(b)  
@@ -730,27 +730,57 @@ summary(dt_selected[,varss])
 
 
 
+########################################
+########################################
+########################################
+# prediction
+########################################
+########################################
+########################################
+dt$Quarter_number=factor(dt$Quarter_number)
+
+ysys=predict(step.model2, newdata = dt, interval="prediction")
+head(ysys)
+
+
+library(ggplot2)
+plot(exp(ysys[,1]), dt$tgp_cs_ind_nonmda)
+abline(abline(a=0,b=1))
 
 
 
 
+new_df <- cbind(dt, tgp_rate_predicted=exp(ysys[,1]),tgp_rate_predicted_LL=exp(ysys[,2]),tgp_rate_predicted_UL=exp(ysys[,3]))
+cor(new_df$tgp_cs_ind_nonmda,new_df$tgp_rate_predicted)^2
+head(new_df)
 
 
+write.csv(new_df,"new_df.csv")
+
+set.seed(1234)
+df <- data.frame(x =1:10, #actual
+                 F =runif(10,1,2), #predicted
+                 L =runif(10,0,1),
+                 U =runif(10,2,3))
 
 
+plot(new_df$tgp_cs_ind_nonmda, new_df$tgp_rate_predicted)
+#make polygon where coordinates start with lower limit and 
+# then upper limit in reverse order
+polygon(c(new_df$tgp_cs_ind_nonmda,rev(new_df$tgp_cs_ind_nonmda)),c(new_df$tgp_rate_predicted_LL,rev(new_df$tgp_rate_predicted_UL)),col = "grey75", border = FALSE)
+lines(new_df$tgp_cs_ind_nonmda, new_df$tgp_rate_predicted, lwd = 2)
+#add red lines on borders of polygon
+lines(df$x, df$U, col="red",lty=2)
+lines(df$x, df$L, col="red",lty=2)
 
 
-
-
-
-
-
-
-
-
-
-
-
+plot(new_df$tgp_rate_predicted~new_df$tgp_cs_ind_nonmda,data=new_df,ylim=range(c(new_df$tgp_rate_predicted_LL,new_df$tgp_rate_predicted_LL)))
+#make polygon where coordinates start with lower limit and then upper limit in reverse order
+with(df2,polygon(c(x,rev(x)),c(lwr,rev(upr)),col = "grey75", border = FALSE))
+matlines(df2[,1],df2[,-1],
+         lwd=c(2,1,1),
+         lty=1,
+         col=c("black","red","red"))
 
 
 
@@ -778,10 +808,10 @@ summary(dt_selected[,varss])
 ########################################
 ########################################
 calculated_rsq=function(dt_selected,mods){
-rsquared_calc=cor(log(dt_selected$tgp_cs_ind_nonmda),mods$fitted.values)^2
-adj_rsquared_calc=1-(((1-rsquared_calc)*(dim(dt_selected)[1]-1))/(dim(dt_selected)[1]-dim(dt_selected)[2]-1))
-rsqs=cbind(rsquared_calc,adj_rsquared_calc)
-return(rsqs)
+          rsquared_calc=cor(log(dt_selected$tgp_cs_ind_nonmda),mods$fitted.values)^2
+          adj_rsquared_calc=1-(((1-rsquared_calc)*(dim(dt_selected)[1]-1))/(dim(dt_selected)[1]-dim(dt_selected)[2]-1))
+          rsqs=cbind(rsquared_calc,adj_rsquared_calc)
+          return(rsqs)
 }
 calculated_rsq(dt_selected,mods)
 
@@ -1045,3 +1075,59 @@ names(dt_selected)
 dim(dt_selected)
 corrplot::corrplot.mixed(corr = cor(dt_selected[,c(45,2:16)]),number.cex=0.65,tl.cex = .5)
 corrplot::corrplot.mixed(corr = cor(dt_selected[,58:80]),number.cex=0.65,tl.cex = .5)
+
+
+
+
+
+############
+ggplot(new_df, aes(x=tgp_cs_ind_nonmda, y=tgp_rate_predicted))+
+          geom_point()+
+          geom_line(aes(y=tgp_rate_predicted_LL,x=tgp_cs_ind_nonmda), color = "red", linetype = "dashed")+
+          geom_line(aes(y=tgp_rate_predicted_UL,x=tgp_cs_ind_nonmda), color = "red", linetype = "dashed")+
+          geom_smooth(method=lm, se=TRUE)
+
+
+ggplot(new_df, aes(y=tgp_rate_predicted_LL,x=tgp_cs_ind_nonmda))+
+          geom_point()
+
+
+head(new_df)
+ggplot(new_df, aes(x=tgp_cs_ind_nonmda, y=tgp_rate_predicted))+
+          geom_point() 
++
+          geom_smooth(aes(y=tgp_rate_predicted_LL), color = "red", linetype = "dashed")
+geom_smooth(aes(y=tgp_rate_predicted_UL), color = "red", linetype = "dashed")
+geom_smooth(method=lm, se=TRUE)
+
+
+
+plot(new_df$tgp_cs_ind_nonmda, new_df$tgp_rate_predicted, xlab="QUET", ylab="SBP", main="Regression")
+abline(step.model2, col="lightblue")
+
+summary(new_df$tgp_cs_ind_nonmda)
+newx <- seq(3.105, 7.384, by=0.05)
+conf_interval <- predict(step.model2, newdata=data.frame(newx), interval="confidence",
+                         level = 0.95)
+
+abline(new_df$tgp_cs_ind_nonmda, new_df$tgp_rate_predicted_LL, col="blue")
+lines(newx, conf_interval[,3], col="blue", lty=2)
+
+pred_interval <- predict(model1, newdata=data.frame(QUET=newx), interval="prediction",
+                         level = 0.95)
+lines(newx, pred_interval[,2], col="orange", lty=2)
+lines(newx, pred_interval[,3], col="orange", lty=2)
+
+
+plot(Biom~C,data,col=c("red","green","blue")[data$N],pch=16,xlab="CO2 concentration",ylab="Plant biomass")
+lines(Pred~C,pred[1:20,],col="red",lwd=3)
+lines(LC~C,pred[1:20,],col="red",lwd=2,lty=2)
+lines(UC~C,pred[1:20,],col="red",lwd=2,lty=2)
+lines(Pred~C,pred[21:40,],col="green",lwd=3)
+lines(LC~C,pred[21:40,],col="green",lwd=2,lty=2)
+lines(UC~C,pred[21:40,],col="green",lwd=2,lty=2)
+lines(Pred~C,pred[41:60,],col="blue",lwd=3)
+lines(LC~C,pred[41:60,],col="blue",lwd=2,lty=2)
+lines(UC~C,pred[41:60,],col="blue",lwd=2,lty=2)
+legend("topleft",legend = c("Few","Medium","A lot"),col=c("red","green","blue"),pch=16,lwd=3,title = "N addition",bty="n")
+
