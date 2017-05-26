@@ -11,7 +11,7 @@ dt$CUSTOMER_CNT_IND_NONMDA
 # exclude price source 1 and 4
 #lost and new count seems a bit wierd may need to rerun and the counts
 #tail(dt)
-
+dim(dt_selected)
 ###################
 ###################
 ##Variable Extraction
@@ -32,7 +32,7 @@ dt$tgp_per_drop=round(dt$TGP_IND_NONMDA_RT_TYPE/dt$DROP_CNT_IND_NONMDA,4) # TGP 
 dt$sales_per_drop=round(dt$SALES_IND_NONMDA/dt$DROP_CNT_IND_NONMDA,0) #sales per drop 
 dt$ave_customer_size=round(dt$SALES_IND_NONMDA/dt$CUSTOMER_CNT_IND_NONMDA,0) #average customer sales size
 
-dt$ind_nonmda_share=100*round(dt$QTY_IND_NONMDA/dt$QTY_IND,4) #mda share of IND
+          dt$ind_nonmda_share=100*round(dt$QTY_IND_NONMDA/dt$QTY_IND,4) #mda share of IND
 
 #dt$indnonmdalocal_share=dt$QTY_IND_NONMDA_LOCAL/dt$QTY_IND_NONMDA
 dt$ind_nonmda_eb_share=100*round(dt$QTY_EB_IND_NONMDA/dt$QTY_IND_NONMDA,4) # EB voume share
@@ -595,7 +595,7 @@ output_MUTATE=cbind(coef.mean,percentile95Percbeta,coef.sd)
 colnames(output_MUTATE)=c('coef_MuTaTe','MuTaTe2.5','MuTaTe97.5','coef_SD_MuTaTe')
 
 
-
+summary(step.model2)
 ########################################
 ########################################
 ########################################
@@ -604,10 +604,10 @@ colnames(output_MUTATE)=c('coef_MuTaTe','MuTaTe2.5','MuTaTe97.5','coef_SD_MuTaTe
 ########################################
 ########################################
 library(relaimpo)
-
+summary(step.model2)
 #relative importance of input variables
 relImportance <- calc.relimp(step.model2, type = "lmg", rela = TRUE)  # calculate relative importance scaled to 100
-as.matrix(round(100*sort(relImportance$lmg, decreasing=TRUE)),0)  # relative importance
+as.matrix(sort(relImportance$lmg, decreasing=TRUE))  # relative importance
 ave.coefs=apply(relImportance$ave.coeffs, 1, mean)
 dim(as.matrix(ave.coefs))
 # boot <- boot.relimp(step.model2, b = 1000, type = c("lmg"), rank = TRUE, 
@@ -719,6 +719,7 @@ saveRDS(fff,'results_coefs_20170516_2200.rds')
 write.csv(fff,'results_coefs_20170516_2200.csv', row.names = F)
 
 
+matplot(dt_selected[-c(39:41,709),c(78,55,58)],type = 'l')
 #not meaningful for all variables
 # final_Datas2=cbind(fff[,1],exp(fff[,-1])-1)
 # saveRDS(final_Datas2,'transformed_results_coefs_20170516_2245.rds')
@@ -728,8 +729,7 @@ write.csv(fff,'results_coefs_20170516_2200.csv', row.names = F)
 
 summary(dt_selected[,varss])
 
-
-
+37.77*0.01
 ########################################
 ########################################
 ########################################
@@ -743,6 +743,8 @@ ysys=predict(step.model2, newdata = dt, interval="prediction")
 head(ysys)
 
 
+
+
 library(ggplot2)
 plot(exp(ysys[,1]), dt$tgp_cs_ind_nonmda)
 abline(abline(a=0,b=1))
@@ -754,36 +756,64 @@ new_df <- cbind(dt, tgp_rate_predicted=exp(ysys[,1]),tgp_rate_predicted_LL=exp(y
 cor(new_df$tgp_cs_ind_nonmda,new_df$tgp_rate_predicted)^2
 head(new_df)
 
+names(new_df)
+aggregate( . ~ DIV_NM, data=new_df, FUN=cor(tgp_cs_ind_nonmda,tgp_rate_predicted)^2)
+
+
+
+
+# metroNY=subset(new_df, new_df$DIV_NM=='METRO NEW YORK')
+# plot(metroNY$tgp_cs_ind_nonmda,metroNY$tgp_rate_predicted,type = 'p')
 
 write.csv(new_df,"new_df.csv")
 
 set.seed(1234)
-df <- data.frame(x =1:10, #actual
-                 F =runif(10,1,2), #predicted
-                 L =runif(10,0,1),
-                 U =runif(10,2,3))
+dfddd <- data.frame(x =new_df2$tgp_cs_ind_nonmda, 
+                 F =new_df2$tgp_rate_predicted, #predicted
+                 L =new_df2$tgp_rate_predicted_LL,
+                 U =new_df2$tgp_rate_predicted_UL)
 
+names(new_df)
+new_df2=new_df[,c(90,132:135)]
+dim(new_df2)
+new_df2$orders=c(1:2112)
+new_df2=new_df2[order(new_df2$tgp_cs_ind_nonmda),] 
 
-plot(new_df$tgp_cs_ind_nonmda, new_df$tgp_rate_predicted)
+plot(dfddd$x, dfddd$F,type = "l")
 #make polygon where coordinates start with lower limit and 
 # then upper limit in reverse order
-polygon(c(new_df$tgp_cs_ind_nonmda,rev(new_df$tgp_cs_ind_nonmda)),c(new_df$tgp_rate_predicted_LL,rev(new_df$tgp_rate_predicted_UL)),col = "grey75", border = FALSE)
-lines(new_df$tgp_cs_ind_nonmda, new_df$tgp_rate_predicted, lwd = 2)
+polygon(c(dfddd$x,rev(dfddd$x)),c(dfddd$L,rev(dfddd$U)),col = "grey75", border = FALSE)
+
 #add red lines on borders of polygon
-lines(df$x, df$U, col="red",lty=2)
-lines(df$x, df$L, col="red",lty=2)
+lines(dfddd$x, dfddd$U, col="red",lty=2)
+lines(dfddd$x, dfddd$L, col="red",lty=2)
+lines(dfddd$x, dfddd$F,type = "p")
 
 
-plot(new_df$tgp_rate_predicted~new_df$tgp_cs_ind_nonmda,data=new_df,ylim=range(c(new_df$tgp_rate_predicted_LL,new_df$tgp_rate_predicted_LL)))
-#make polygon where coordinates start with lower limit and then upper limit in reverse order
-with(df2,polygon(c(x,rev(x)),c(lwr,rev(upr)),col = "grey75", border = FALSE))
-matlines(df2[,1],df2[,-1],
-         lwd=c(2,1,1),
-         lty=1,
-         col=c("black","red","red"))
-
-
-
+formula(step.model2)
+yyy<- + 1.57208405895272- 0.000013613483535452 * dt$ave_customer_size
+-0.0125057807170266 * dt$cop_share
+-0.000781364475317775 * dt$Cust_Tenure_mnth
++ 0.0181537334477934 * dt$CustomMarketIndexCMI
+-0.00208033577392487 * dt$EcomPenetration
+-0.00248002175350762 * dt$ind_nonmda_eb_share 
++ 0.00187471732270084 * dt$ind_nonmda_packer_share
+-0.00197109820776728 * dt$ind_nonmda_share
+-0.0014068427252908 * dt$ind_share
+-0.00446678454994961 * dt$Investment.Spend.CS.participation
+-0.0744378039298394 * dt$LIC_per_CS
+-0.00131770896271067 * dt$new_share
+-0.00320284716131055 * dt$nps
++ 0.000752359923252853 * dt$POI
+-0.00305126660529659 * dt$Price_approval_share 
++ 0.0371604117243461 * dt$priceIndex
+-0.00125758234072862 * dt$prime_share 
++ 0.0396831414334563 * dt$Quarter_number2 
++ 0.0806803564472373 * dt$Quarter_number3 
++ 0.0727333676311823 * dt$Quarter_number4 
++ 0.000640907556347845 * dt$TM_Tenure_mnth 
++ 0.00072978272756472 * dt$typeA_share 
++ 0.00458310759498299 * dt$USFMarketShareStatic
 
 
 ########################################
